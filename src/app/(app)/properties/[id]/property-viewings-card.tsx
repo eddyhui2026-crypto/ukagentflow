@@ -191,8 +191,8 @@ export async function PropertyViewingsCard({
                                             </span>
                                           ) : (
                                             <span className="mt-1 block text-[11px] text-zinc-500 dark:text-zinc-500">
-                                              Past send time — usually the next cron run delivers. Copy email draft
-                                              to send now, or check <code className="rounded bg-zinc-200 px-0.5 text-[10px] dark:bg-zinc-800">CRON_SECRET</code> and your host&apos;s cron to{" "}
+                                              Past send time — usually the next scheduled run delivers. Copy email draft
+                                              to send now, or check <code className="rounded bg-zinc-200 px-0.5 text-[10px] dark:bg-zinc-800">CRON_SECRET</code> and your scheduler hitting{" "}
                                               <code className="rounded bg-zinc-200 px-0.5 text-[10px] dark:bg-zinc-800">
                                                 /api/cron/send-feedback-invites
                                               </code>

@@ -1,0 +1,31 @@
+# Hobby Vercel plans only allow once-per-day crons. This replaces vercel.json crons:
+# schedule → GET production /api/cron/send-feedback-invites with Bearer CRON_SECRET.
+#
+# Repo secrets (Settings → Secrets and variables → Actions):
+#   CRON_INVOKE_URL — full URL, e.g. https://your-app.vercel.app/api/cron/send-feedback-invites
+#   CRON_SECRET    — same value as Vercel env CRON_SECRET
+name: Scheduled feedback invites
+
+on:
+  schedule:
+    # Every hour at :15 UTC (matches former vercel.json schedule)
+    - cron: "15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  invoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call send-feedback-invites endpoint
+        env:
+          CRON_INVOKE_URL: ${{ secrets.CRON_INVOKE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CRON_INVOKE_URL:-}" ] || [ -z "${CRON_SECRET:-}" ]; then
+            echo "Set repository secrets CRON_INVOKE_URL and CRON_SECRET (same secret as on Vercel)."
+            exit 1
+          fi
+          curl -fsS -X GET "$CRON_INVOKE_URL" \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            -H "Accept: application/json"

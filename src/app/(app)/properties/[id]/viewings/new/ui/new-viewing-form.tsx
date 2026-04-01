@@ -137,8 +137,10 @@ export function NewViewingForm({ propertyId }: { propertyId: string }) {
                 <strong className="font-medium text-zinc-700 dark:text-zinc-300">
                   the morning after the viewing
                 </strong>{" "}
-                (about 9:00 Europe/London), not immediately. A scheduled job must run on your host
-                (see <code className="rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">vercel.json</code>{" "}
+                (about 9:00 Europe/London), not immediately. A scheduled job must call your production
+                <code className="mx-0.5 rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">/api/cron/send-feedback-invites</code>{" "}
+                (e.g. GitHub Actions in
+                <code className="mx-0.5 rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">.github/workflows</code>{" "}
                 + <code className="rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">CRON_SECRET</code>).
               </span>
             </span>

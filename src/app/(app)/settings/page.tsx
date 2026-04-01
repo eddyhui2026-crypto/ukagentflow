@@ -139,10 +139,11 @@ export default async function SettingsPage() {
                       9:00 Europe/London
                     </strong>{" "}
                     — not the moment you save. Subject and body use the same placeholders when that send
-                    runs (configure a cron hitting{" "}
+                    runs (configure a scheduled job — e.g. GitHub Actions — calling{" "}
                     <code className="rounded bg-zinc-100 px-1 text-xs dark:bg-zinc-800">
                       /api/cron/send-feedback-invites
-                    </code>
+                    </code>{" "}
+                    with <code className="rounded bg-zinc-100 px-1 text-xs dark:bg-zinc-800">CRON_SECRET</code>
                     ).
                   </p>
                   <div className="mt-6">
