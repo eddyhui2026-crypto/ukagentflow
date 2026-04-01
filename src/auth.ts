@@ -1,9 +1,12 @@
+import { ensurePublicUrlEnvAbsolute } from "@/lib/env/ensure-public-url-env-absolute";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
 import { getSql } from "@/lib/db/neon";
 import { readThenTouchUserLastLoginAt } from "@/lib/users/last-login";
+
+ensurePublicUrlEnvAbsolute();
 
 class InvalidLoginError extends CredentialsSignin {
   code = "invalid_credentials";

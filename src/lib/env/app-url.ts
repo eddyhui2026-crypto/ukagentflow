@@ -1,3 +1,7 @@
+import { ensurePublicUrlEnvAbsolute } from "@/lib/env/ensure-public-url-env-absolute";
+
+ensurePublicUrlEnvAbsolute();
+
 /** Absolute base URL for server-side links (emails, etc.). No trailing slash. */
 export function getAppBaseUrl(): string {
   const fromAuth = process.env.AUTH_URL?.trim();
