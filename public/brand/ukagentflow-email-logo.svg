@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 216 40" width="216" height="40" role="img" aria-label="UKAgentFlow">
+  <rect x="0" y="4" width="32" height="32" rx="8" fill="#0284c7"/>
+  <path fill="none" stroke="#fff" stroke-width="1.65" stroke-linecap="round" d="M7 24.5c4-2.5 7.5-2.2 11-.2.8.4 1.6.9 2.5 1.3 2.5 1.2 5.2 1.5 7.5-.3"/>
+  <path fill="none" stroke="#fff" stroke-width="1.65" stroke-linecap="round" d="M7 18.5c3.8-2 7-1.5 10.2.6 1 .6 2 1.2 3.1 1.7 2.8 1.3 5.8 1.4 8.7-.3"/>
+  <path fill="none" stroke="#fff" stroke-width="1.65" stroke-linecap="round" d="M7 12.5c3.5-1.5 6.5-1 9.5 1 1.1.7 2.2 1.4 3.4 1.9 3 1.2 6.2 1.1 9.1-1"/>
+  <text x="40" y="27" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" font-weight="700" fill="#0f172a">UKAgent</text>
+  <text x="112" y="27" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" font-weight="700" fill="#64748b">Flow</text>
+</svg>

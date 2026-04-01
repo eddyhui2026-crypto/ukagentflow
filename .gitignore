@@ -24,6 +24,12 @@
 .DS_Store
 *.pem
 
+# editor / local tooling
+.cursor/
+
+# local scratch (optional)
+_nextauth_versions.json
+
 # debug
 npm-debug.log*
 yarn-debug.log*

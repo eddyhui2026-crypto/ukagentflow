@@ -1,0 +1,49 @@
+/**
+ * Next.js 16 still runs this file, but the `middleware` filename is deprecated in favour of `proxy`.
+ * When you upgrade workflow, follow https://nextjs.org/docs/messages/middleware-to-proxy — e.g.
+ * `npx @next/codemod@canary middleware-to-proxy .` then re-test Auth.js wrapping.
+ */
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
+
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const isAuthed = !!req.auth;
+
+  const needsAuth =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/properties") ||
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/reports");
+
+  if (needsAuth && !isAuthed) {
+    const login = new URL("/login", req.url);
+    login.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(login);
+  }
+
+  if (
+    (pathname === "/login" ||
+      pathname === "/register" ||
+      pathname === "/forgot-password") &&
+    isAuthed
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  return NextResponse.next();
+});
+
+export const config = {
+  matcher: [
+    "/dashboard/:path*",
+    "/properties/:path*",
+    "/settings/:path*",
+    "/reports",
+    "/reports/:path*",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+  ],
+};
