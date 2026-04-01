@@ -38,7 +38,7 @@ function MergedStatCard({
   lettingAll: number;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-3 sm:px-4 sm:py-4 dark:border-zinc-800 dark:bg-zinc-900">
       <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         {label}
       </p>
@@ -138,25 +138,25 @@ export default async function DashboardPage({
   const letWeek = weekStats.letting;
 
   const searchFallback = (
-    <div className="h-9 min-w-[10rem] max-w-[18rem] animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-700" />
+    <div className="h-9 w-full min-w-0 max-w-full animate-pulse rounded-md bg-zinc-200 sm:min-w-[10rem] sm:max-w-[18rem] dark:bg-zinc-700" />
   );
 
   return (
-    <div className="p-6 lg:p-10">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Dashboard</h1>
+    <div className="px-3 py-4 pb-8 sm:p-6 lg:p-10">
+      <div className="mx-auto w-full max-w-7xl min-w-0">
+        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold text-zinc-900 sm:text-2xl dark:text-zinc-50">Dashboard</h1>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
               Sales and lettings are shown separately below.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
             <Link
               href="/properties?listing=sale"
               className={cn(
                 buttonVariants({ variant: "outline", size: "default" }),
-                "border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-50 hover:text-zinc-900",
+                "w-full justify-center border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-50 hover:text-zinc-900 sm:w-auto",
                 "dark:border-zinc-300 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-50 dark:hover:text-zinc-900",
               )}
             >
@@ -164,16 +164,22 @@ export default async function DashboardPage({
             </Link>
             <Link
               href="/properties?listing=letting"
-              className={cn(buttonVariants({ variant: "outline", size: "default" }))}
+              className={cn(
+                buttonVariants({ variant: "outline", size: "default" }),
+                "w-full justify-center sm:w-auto",
+              )}
             >
               To let listings
             </Link>
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Overview</h2>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400 sm:hidden">
+            This week vs all time (UK week from Monday). Scroll tables sideways on a small screen.
+          </p>
+          <p className="mt-1 hidden text-xs text-zinc-500 sm:block dark:text-zinc-500">
             For sale vs to let. <strong className="font-medium text-zinc-600 dark:text-zinc-400">Large numbers</strong>{" "}
             are this <strong className="font-medium text-zinc-600 dark:text-zinc-400">UK week</strong> (from Monday
             00:00 London); the smaller line is <strong className="font-medium text-zinc-600 dark:text-zinc-400">all time</strong>{" "}
@@ -185,7 +191,7 @@ export default async function DashboardPage({
             <strong className="font-medium text-zinc-600 dark:text-zinc-400">Pre-viewing</strong> counts submissions on live
             instructions (hidden when Sold, Let, or Withdrawn), same as the activity tables below.
           </p>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-5">
             <MergedStatCard
               label="Properties"
               saleWeek={saleWeek.property_count}
@@ -224,9 +230,14 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        <div className="mt-12">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Recent activity</h2>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <div className="mt-8 sm:mt-12">
+          <h2 className="text-base font-semibold text-zinc-900 sm:text-lg dark:text-zinc-50">Recent activity</h2>
+          <p className="mt-1 text-sm text-zinc-600 md:hidden dark:text-zinc-400">
+            Use <strong className="font-medium">Feedback</strong> / <strong className="font-medium">Pre-viewing</strong>{" "}
+            per panel. <strong className="font-medium">New</strong> = last 24h. Swipe the table horizontally if columns
+            don&apos;t fit.
+          </p>
+          <p className="mt-1 hidden text-sm text-zinc-600 md:block dark:text-zinc-400">
             Use <strong className="font-medium">Feedback</strong> / <strong className="font-medium">Pre-viewing</strong>{" "}
             in each panel to switch tables. Feedback lists one row per submission after a viewing; pre-viewing lists
             form submissions from your share links. <strong className="font-medium">New</strong> means submitted in the
@@ -237,7 +248,7 @@ export default async function DashboardPage({
             <strong className="font-medium">STC</strong> / <strong className="font-medium">Let agreed</strong> still
             show until you complete or withdraw.
           </p>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-500">
+          <p className="mt-2 hidden text-xs text-zinc-500 lg:block dark:text-zinc-500">
             Up to {FEEDBACK_EACH_LIMIT} rows per list. In <strong className="font-medium">Feedback</strong>, click the
             arrows next to <strong className="font-medium">Viewing</strong>,{" "}
             <strong className="font-medium">Submitted</strong>, <strong className="font-medium">Rating</strong>, or{" "}
@@ -249,7 +260,7 @@ export default async function DashboardPage({
             after you stop typing. Scroll inside the panel;
             on narrow screens scroll sideways (~1040–1270px table width).
           </p>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-500">
+          <p className="mt-2 hidden text-xs text-zinc-500 xl:block dark:text-zinc-500">
             <strong className="font-medium text-zinc-600 dark:text-zinc-400">Tip:</strong> closing the browser tab does
             not sign you out — you stay logged in. The sidebar count shows feedback and pre-viewing from the{" "}
             <strong className="font-medium">last 24 hours</strong>. Use <strong className="font-medium">Sign out</strong>{" "}
@@ -262,7 +273,7 @@ export default async function DashboardPage({
             prequalLetting={newPrequal24h.letting}
           />
 
-          <div className="mt-4 space-y-6">
+          <div className="mt-4 space-y-5 sm:space-y-6">
             <DashboardListingActivityPanel
               title="For sale"
               feedbackDescription="Latest buyer feedback on sales instructions."

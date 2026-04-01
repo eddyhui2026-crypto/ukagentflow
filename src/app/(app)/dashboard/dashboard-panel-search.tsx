@@ -48,7 +48,7 @@ export function DashboardPanelSearch({
       autoComplete="off"
       disabled={pending}
       aria-label={placeholder}
-      className="w-full min-w-[10rem] max-w-[18rem] rounded-md border border-zinc-300 bg-white px-2.5 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-950"
+      className="box-border w-full min-w-0 max-w-full rounded-md border border-zinc-300 bg-white px-2.5 py-1.5 text-sm sm:min-w-[10rem] sm:max-w-[18rem] dark:border-zinc-600 dark:bg-zinc-950"
     />
   );
 }

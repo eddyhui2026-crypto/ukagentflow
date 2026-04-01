@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -47,8 +48,10 @@ export function ReportProblemControl() {
         type="button"
         variant="outline"
         size="sm"
+        aria-label="Report issue"
         className={cn(
           "border-amber-500/80 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-amber-500/50 dark:bg-amber-950/50 dark:text-amber-100 dark:hover:bg-amber-950/80",
+          "gap-1.5 px-2 sm:px-2.5",
         )}
         onClick={() => {
           setOpen(true);
@@ -56,12 +59,13 @@ export function ReportProblemControl() {
           setDone(false);
         }}
       >
-        Report issue
+        <AlertTriangle className="size-4 shrink-0 sm:hidden" aria-hidden />
+        <span className="hidden sm:inline">Report issue</span>
       </Button>
 
       {open ? (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
+          className="fixed inset-0 z-[100] flex items-end justify-center p-4 sm:items-center"
           role="dialog"
           aria-modal="true"
           aria-labelledby="report-issue-title"

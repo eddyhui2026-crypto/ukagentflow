@@ -16,22 +16,35 @@ const tailNav = [
   { href: "/settings", label: "Settings" },
 ];
 
-export function AppSidebar({ sidebarRecent24hCount = 0 }: { sidebarRecent24hCount?: number }) {
+export function AppSidebar({
+  sidebarRecent24hCount = 0,
+  onNavigate,
+  hideBrandHeader = false,
+}: {
+  sidebarRecent24hCount?: number;
+  /** Close mobile drawer after navigating */
+  onNavigate?: () => void;
+  /** Mobile drawer: top row is the close button — omit duplicate brand strip */
+  hideBrandHeader?: boolean;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const listingParam =
     searchParams.get("listing") === "letting" ? "letting" : "sale";
 
   return (
-    <aside className="flex w-52 shrink-0 flex-col border-r border-zinc-200 bg-zinc-100/80 dark:border-zinc-800 dark:bg-zinc-900/50">
-      <div className="border-b border-zinc-200 px-4 py-4 dark:border-zinc-800">
-        <Link
-          href="/dashboard"
-          className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50"
-        >
-          UKAgentFlow
-        </Link>
-      </div>
+    <aside className="flex h-full w-full shrink-0 flex-col border-r border-zinc-200 bg-zinc-100/80 md:w-52 dark:border-zinc-800 dark:bg-zinc-900/50">
+      {hideBrandHeader ? null : (
+        <div className="border-b border-zinc-200 px-4 py-4 dark:border-zinc-800">
+          <Link
+            href="/dashboard"
+            className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50"
+            onClick={onNavigate}
+          >
+            UKAgentFlow
+          </Link>
+        </div>
+      )}
       <nav className="flex flex-1 flex-col gap-0.5 p-3">
         {mainNav.map(({ href, label }) => {
           const active = pathname === href;
@@ -39,6 +52,7 @@ export function AppSidebar({ sidebarRecent24hCount = 0 }: { sidebarRecent24hCoun
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={cn(
                 "flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm font-medium",
                 active
@@ -71,6 +85,7 @@ export function AppSidebar({ sidebarRecent24hCount = 0 }: { sidebarRecent24hCoun
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={cn(
                 "rounded-md px-3 py-2 text-sm font-medium",
                 active
@@ -95,6 +110,7 @@ export function AppSidebar({ sidebarRecent24hCount = 0 }: { sidebarRecent24hCoun
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={cn(
                 "rounded-md px-3 py-2 text-sm font-medium",
                 active

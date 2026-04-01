@@ -93,9 +93,12 @@ function lettingPetsShort(v: boolean | null) {
   return '—';
 }
 
-const TABLE_MIN_WIDTH = 'min-w-[1268px]';
-const BODY_MAX_HEIGHT = 'max-h-[22rem]';
-const PREQUAL_TABLE_MIN = 'min-w-[1040px]';
+/** Narrower min-widths on small viewports so less horizontal panning now the sidebar is off-canvas. */
+const FEEDBACK_TABLE_MIN =
+  'min-w-[640px] sm:min-w-[880px] lg:min-w-[1100px] xl:min-w-[1268px]';
+const BODY_MAX_HEIGHT = 'max-h-[22rem] max-md:max-h-[min(70vh,28rem)]';
+const PREQUAL_TABLE_MIN =
+  'min-w-[520px] sm:min-w-[760px] lg:min-w-[960px] xl:min-w-[1040px]';
 type View = 'feedback' | 'prequal';
 
 /** `server` = API order (feedback: hot first, then time). */
@@ -398,7 +401,7 @@ export function DashboardListingActivityPanel({
 
   return (
     <div className={cn('overflow-hidden rounded-lg border-2 bg-white dark:bg-zinc-900', ring)}>
-      <div className="border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
+      <div className="border-b border-zinc-200 px-3 py-3 sm:px-4 dark:border-zinc-800">
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
             <div className="min-w-0 flex-1">
@@ -470,9 +473,9 @@ export function DashboardListingActivityPanel({
             />
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="-mx-0 overflow-x-auto overscroll-x-contain touch-pan-x">
             <div className={cn('overflow-y-auto', BODY_MAX_HEIGHT)}>
-              <table className={cn('w-full text-left text-sm', TABLE_MIN_WIDTH)}>
+              <table className={cn('w-full text-left text-sm', FEEDBACK_TABLE_MIN)}>
                 <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
                   <tr>
                     <th className="w-14 px-2 py-3">
@@ -492,7 +495,7 @@ export function DashboardListingActivityPanel({
                     />
                     <th className="min-w-[10rem] px-3 py-3">Property</th>
                     <th className="min-w-[6.5rem] px-3 py-3">Buyer</th>
-                    <th className="min-w-[16rem] px-3 py-3">Contact</th>
+                    <th className="min-w-[12rem] px-3 py-3 sm:min-w-[16rem]">Contact</th>
                     <FeedbackSortColumnHeader
                       label="Rating"
                       column="rating"
@@ -552,8 +555,8 @@ export function DashboardListingActivityPanel({
                       <td className="max-w-[10rem] truncate px-3 py-3 text-zinc-700 dark:text-zinc-300">
                         {row.buyer_name}
                       </td>
-                      <td className="min-w-[16rem] max-w-[22rem] px-3 py-3 align-top text-xs leading-snug">
-                        <div className="flex gap-2">
+                      <td className="min-w-[12rem] max-w-[20rem] px-3 py-3 align-top text-xs leading-snug sm:min-w-[16rem] sm:max-w-[22rem]">
+                        <div className="flex flex-wrap gap-2">
                           <ContactOutreachLinks
                             email={row.buyer_email}
                             phone={row.buyer_phone}
@@ -672,7 +675,7 @@ function SalePrequalTable({
   onCycleSubmittedSort: () => void;
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="-mx-0 overflow-x-auto overscroll-x-contain touch-pan-x">
       <div className={cn('overflow-y-auto', BODY_MAX_HEIGHT)}>
         <table className={cn('w-full text-left text-sm', PREQUAL_TABLE_MIN)}>
           <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
@@ -683,7 +686,7 @@ function SalePrequalTable({
               <SubmittedColumnHeader mode={submittedSort} onCycle={onCycleSubmittedSort} />
               <th className="min-w-[10rem] px-3 py-3">Property</th>
               <th className="min-w-[6.5rem] px-3 py-3">Name</th>
-              <th className="min-w-[16rem] px-3 py-3">Contact</th>
+              <th className="min-w-[12rem] px-3 py-3 sm:min-w-[16rem]">Contact</th>
               <th className="whitespace-nowrap px-3 py-3">Buying</th>
               <th className="whitespace-nowrap px-3 py-3">Funding</th>
               <th className="whitespace-nowrap px-3 py-3">Link</th>
@@ -728,8 +731,8 @@ function SalePrequalTable({
                 <td className="max-w-[10rem] truncate px-3 py-3 text-zinc-700 dark:text-zinc-300">
                   {row.name}
                 </td>
-                <td className="min-w-[16rem] max-w-[22rem] px-3 py-3 align-top text-xs leading-snug">
-                  <div className="flex gap-2">
+                <td className="min-w-[12rem] max-w-[20rem] px-3 py-3 align-top text-xs leading-snug sm:min-w-[16rem] sm:max-w-[22rem]">
+                  <div className="flex flex-wrap gap-2">
                     <ContactOutreachLinks email={row.email} phone={row.phone} className="pt-0.5" />
                     <div className="min-w-0 flex-1">
                       <a
@@ -787,7 +790,7 @@ function LettingPrequalTable({
   onCycleSubmittedSort: () => void;
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="-mx-0 overflow-x-auto overscroll-x-contain touch-pan-x">
       <div className={cn('overflow-y-auto', BODY_MAX_HEIGHT)}>
         <table className={cn('w-full text-left text-sm', PREQUAL_TABLE_MIN)}>
           <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
@@ -798,7 +801,7 @@ function LettingPrequalTable({
               <SubmittedColumnHeader mode={submittedSort} onCycle={onCycleSubmittedSort} />
               <th className="min-w-[10rem] px-3 py-3">Property</th>
               <th className="min-w-[6.5rem] px-3 py-3">Name</th>
-              <th className="min-w-[16rem] px-3 py-3">Contact</th>
+              <th className="min-w-[12rem] px-3 py-3 sm:min-w-[16rem]">Contact</th>
               <th className="whitespace-nowrap px-3 py-3">Income</th>
               <th className="whitespace-nowrap px-3 py-3">Pets</th>
               <th className="whitespace-nowrap px-3 py-3">Link</th>
@@ -843,8 +846,8 @@ function LettingPrequalTable({
                 <td className="max-w-[10rem] truncate px-3 py-3 text-zinc-700 dark:text-zinc-300">
                   {row.name}
                 </td>
-                <td className="min-w-[16rem] max-w-[22rem] px-3 py-3 align-top text-xs leading-snug">
-                  <div className="flex gap-2">
+                <td className="min-w-[12rem] max-w-[20rem] px-3 py-3 align-top text-xs leading-snug sm:min-w-[16rem] sm:max-w-[22rem]">
+                  <div className="flex flex-wrap gap-2">
                     <ContactOutreachLinks email={row.email} phone={row.phone} className="pt-0.5" />
                     <div className="min-w-0 flex-1">
                       <a
