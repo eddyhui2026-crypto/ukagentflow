@@ -1,8 +1,12 @@
 "use client";
 
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { handleMailtoAnchorClick } from "@/lib/mailto-open";
-import { buildWhatsAppOpenChatUrl, normalizePhoneToWhatsAppDigits } from "@/lib/whatsapp";
+import {
+  buildTelHref,
+  buildWhatsAppOpenChatUrl,
+  normalizePhoneToWhatsAppDigits,
+} from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
 const iconClass =
@@ -20,7 +24,7 @@ function WhatsAppGlyph({ className }: { className?: string }) {
 }
 
 /**
- * WhatsApp (wa.me) and mailto shortcuts for a dashboard / table contact cell.
+ * Phone (tel:), WhatsApp (wa.me), and mailto shortcuts for a dashboard / table contact cell.
  */
 export function ContactOutreachLinks({
   email,
@@ -34,8 +38,9 @@ export function ContactOutreachLinks({
   const trimmedEmail = email?.trim() ?? "";
   const digits = normalizePhoneToWhatsAppDigits(phone);
   const waHref = digits ? buildWhatsAppOpenChatUrl(digits) : null;
+  const telHref = buildTelHref(phone);
 
-  if (!trimmedEmail && !waHref) {
+  if (!trimmedEmail && !waHref && !telHref) {
     return null;
   }
 
@@ -47,6 +52,18 @@ export function ContactOutreachLinks({
       role="group"
       aria-label="Contact shortcuts"
     >
+      {telHref ? (
+        <a
+          href={telHref}
+          className={cn(
+            iconClass,
+            "text-zinc-600 hover:text-emerald-700 dark:text-zinc-300 dark:hover:text-emerald-400",
+          )}
+          aria-label="Call phone"
+        >
+          <Phone className="size-[18px]" strokeWidth={2} aria-hidden />
+        </a>
+      ) : null}
       {waHref ? (
         <a
           href={waHref}

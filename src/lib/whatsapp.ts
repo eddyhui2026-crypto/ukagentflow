@@ -16,6 +16,15 @@ export function buildWhatsAppOpenChatUrl(e164Digits: string): string {
 /**
  * UK-focused: 07… → 447…; strips spaces. Returns null if unusable.
  */
+/** Compact `tel:` href (spaces stripped). Null if nothing dialable. */
+export function buildTelHref(raw: string | null | undefined): string | null {
+  if (!raw?.trim()) return null;
+  const compact = raw.replace(/\s+/g, "").trim();
+  if (compact.length < 3) return null;
+  if (!/\d/.test(compact)) return null;
+  return `tel:${compact}`;
+}
+
 export function normalizePhoneToWhatsAppDigits(raw: string | null | undefined): string | null {
   if (!raw?.trim()) return null;
   let d = raw.replace(/\D/g, "");
