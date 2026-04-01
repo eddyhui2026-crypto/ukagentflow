@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ForgotPasswordForm } from "./ui/forgot-password-form";
 
+export const dynamic = "force-dynamic";
+
 export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { DashboardListingActivityPanel } from "./dashboard-listing-activity-panel";
@@ -71,7 +72,7 @@ export default async function DashboardPage({
 }) {
   const session = await auth();
   if (!session?.user?.companyId) {
-    return null;
+    redirect("/login");
   }
 
   const companyId = session.user.companyId;

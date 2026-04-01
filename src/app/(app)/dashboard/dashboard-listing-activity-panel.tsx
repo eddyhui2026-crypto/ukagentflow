@@ -33,7 +33,8 @@ function formatDateTime(value: Date | string) {
   });
 }
 
-function formatViewDate(iso: string) {
+function formatViewDate(iso: string | null | undefined) {
+  if (!iso) return "—";
   const d = new Date(iso + 'T12:00:00');
   return d.toLocaleDateString('en-GB', {
     weekday: 'short',
@@ -43,7 +44,8 @@ function formatViewDate(iso: string) {
   });
 }
 
-function formatInterest(label: string) {
+function formatInterest(label: string | null | undefined) {
+  if (!label) return "—";
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 

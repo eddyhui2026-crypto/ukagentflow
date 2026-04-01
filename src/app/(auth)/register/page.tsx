@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { RegisterForm } from "./ui/register-form";
 
+export const dynamic = "force-dynamic";
+
 export default function RegisterPage() {
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4">

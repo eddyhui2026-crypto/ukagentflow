@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { LoginForm } from "./ui/login-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function LoginPage({
   searchParams,
 }: {

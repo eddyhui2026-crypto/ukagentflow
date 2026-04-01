@@ -4,11 +4,18 @@
  * `npx @next/codemod@canary middleware-to-proxy .` then re-test Auth.js wrapping.
  */
 import { auth } from "@/auth";
+import type { Session } from "next-auth";
 import { NextResponse } from "next/server";
+
+/** `!!req.auth` is unsafe — session JSON can be a truthy object without a user. */
+function hasUserSession(session: Session | null | undefined): boolean {
+  const id = session?.user?.id;
+  return typeof id === "string" && id.length > 0;
+}
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  const isAuthed = !!req.auth;
+  const isAuthed = hasUserSession(req.auth);
 
   const needsAuth =
     pathname.startsWith("/dashboard") ||
