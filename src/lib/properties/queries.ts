@@ -10,6 +10,10 @@ export type PropertyListRow = {
   viewing_count: number;
   feedback_count: number;
   hero_image_url: string | null;
+  vendor_portal_token: string;
+  buyer_qr_token: string;
+  prequal_share_token: string;
+  sale_prequal_share_token: string;
 };
 
 export type PropertyListFilters = {
@@ -45,6 +49,10 @@ export async function listPropertiesForCompany(
       p.status,
       p.created_at,
       p.hero_image_url,
+      p.vendor_portal_token,
+      p.buyer_qr_token,
+      p.prequal_share_token,
+      p.sale_prequal_share_token,
       COALESCE(
         (SELECT COUNT(*)::int FROM viewings v WHERE v.property_id = p.id),
         0
