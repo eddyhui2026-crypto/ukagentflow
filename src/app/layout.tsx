@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getMetadataBaseUrl } from "@/lib/env/app-url";
 import "./globals.css";
@@ -15,10 +15,19 @@ const geistMono = Geist_Mono({
 
 const metadataBase = getMetadataBaseUrl();
 
+export const viewport: Viewport = {
+  themeColor: "#0284c7",
+};
+
 export const metadata: Metadata = {
   ...(metadataBase ? { metadataBase } : {}),
   title: "UKAgentFlow",
   description: "Estate agent viewing feedback (UK)",
+  appleWebApp: {
+    capable: true,
+    title: "UKAgentFlow",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({
