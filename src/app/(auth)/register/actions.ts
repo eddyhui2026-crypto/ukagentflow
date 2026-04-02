@@ -4,6 +4,7 @@ import { hash } from "bcryptjs";
 import { randomUUID } from "crypto";
 import { redirect } from "next/navigation";
 import { signIn } from "@/auth";
+import { BILLING_TRIAL_DAYS } from "@/lib/billing/trial";
 import { getSql } from "@/lib/db/neon";
 import type { AuthFormState } from "../login/actions";
 
@@ -35,9 +36,13 @@ export async function registerAction(
   const passwordHash = await hash(password, 12);
   const userId = randomUUID();
 
+  const trialStart = new Date();
+  const trialEnd = new Date(trialStart);
+  trialEnd.setUTCDate(trialEnd.getUTCDate() + BILLING_TRIAL_DAYS);
+
   const companyRows = await sql`
-    INSERT INTO companies (name, plan)
-    VALUES (${companyName}, 'free')
+    INSERT INTO companies (name, plan, trial_started_at, trial_ends_at)
+    VALUES (${companyName}, 'free', ${trialStart}, ${trialEnd})
     RETURNING id
   `;
   const companyId = (companyRows[0] as { id: string } | undefined)?.id;

@@ -11,6 +11,7 @@ export type SettingsTabId =
   | "feedback_forms"
   | "prequal_share"
   | "prequal"
+  | "billing"
   | "account";
 
 const TABS: {
@@ -44,6 +45,11 @@ const TABS: {
     heading: "Pre-viewing pages (public form)",
   },
   {
+    id: "billing",
+    label: "Billing",
+    heading: "Billing & trial",
+  },
+  {
     id: "account",
     label: "Account",
     heading: "Your account",
@@ -64,6 +70,7 @@ function normalizeTabParam(raw: string | null): SettingsTabId {
     raw === "feedback_forms" ||
     raw === "prequal_share" ||
     raw === "prequal" ||
+    raw === "billing" ||
     raw === "account"
   ) {
     return raw;

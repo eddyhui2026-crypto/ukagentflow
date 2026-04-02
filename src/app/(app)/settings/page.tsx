@@ -8,6 +8,7 @@ import {
   getCompanyPrequalShareTemplates,
   getSettingsBranding,
 } from "@/lib/companies/queries";
+import { getCompanyBilling } from "@/lib/companies/billing";
 import {
   diffFeedbackFormConfigForStorage,
   mergeFeedbackFormCopy,
@@ -38,6 +39,7 @@ import { BrandingUrlsForm } from "./branding-urls-form";
 import { ChangePasswordForm } from "./change-password-form";
 import { PrequalShareTemplatesForm } from "./prequal-share-templates-form";
 import { SettingsListingSplitShell } from "./settings-listing-split-shell";
+import { BillingSettingsPanel } from "./billing-settings-panel";
 import { SettingsSectionTabs } from "./settings-section-tabs";
 
 export default async function SettingsPage() {
@@ -46,14 +48,21 @@ export default async function SettingsPage() {
     return null;
   }
 
-  const [row, formRaw, lettingsFormRaw, prequalRaw, branding, prequalShareRow] = await Promise.all([
-    getCompanyFeedbackInviteTemplates(session.user.companyId),
-    getCompanyFeedbackFormConfig(session.user.companyId),
-    getCompanyLettingsFeedbackFormConfig(session.user.companyId),
-    getCompanyPrequalFormConfigs(session.user.companyId),
-    getSettingsBranding(session.user.id, session.user.companyId),
-    getCompanyPrequalShareTemplates(session.user.companyId),
-  ]);
+  const [row, formRaw, lettingsFormRaw, prequalRaw, branding, prequalShareRow, billingRow] =
+    await Promise.all([
+      getCompanyFeedbackInviteTemplates(session.user.companyId),
+      getCompanyFeedbackFormConfig(session.user.companyId),
+      getCompanyLettingsFeedbackFormConfig(session.user.companyId),
+      getCompanyPrequalFormConfigs(session.user.companyId),
+      getSettingsBranding(session.user.id, session.user.companyId),
+      getCompanyPrequalShareTemplates(session.user.companyId),
+      getCompanyBilling(session.user.companyId),
+    ]);
+
+  const yearlyPriceConfigured = Boolean(process.env.STRIPE_PRICE_YEARLY?.trim());
+  const stripeConfigured = Boolean(
+    process.env.STRIPE_SECRET_KEY?.trim() && process.env.STRIPE_PRICE_MONTHLY?.trim(),
+  );
 
   const saleShareWa = prequalShareRow?.sale_prequal_share_whatsapp_template?.trim() ?? "";
   const saleShareSubj = prequalShareRow?.sale_prequal_share_email_subject_template?.trim() ?? "";
@@ -304,6 +313,24 @@ export default async function SettingsPage() {
                     </div>
                   }
                 />
+              ),
+              billing: (
+                <div>
+                  {billingRow ? (
+                    <BillingSettingsPanel
+                      trialStartedAtIso={new Date(billingRow.trial_started_at).toISOString()}
+                      trialEndsAtIso={new Date(billingRow.trial_ends_at).toISOString()}
+                      subscriptionStatus={billingRow.subscription_status}
+                      stripeSubscriptionId={billingRow.stripe_subscription_id}
+                      yearlyPriceConfigured={yearlyPriceConfigured}
+                      stripeConfigured={stripeConfigured}
+                    />
+                  ) : (
+                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      Could not load billing for this workspace.
+                    </p>
+                  )}
+                </div>
               ),
               account: (
                 <div>

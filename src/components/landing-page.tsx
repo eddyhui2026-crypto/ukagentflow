@@ -103,8 +103,13 @@ export function LandingPage({ isAuthenticated }: LandingPageProps) {
                 See live layouts
               </a>
             </div>
-            <p className="mt-6 text-sm text-slate-400 dark:text-zinc-500">
-              No credit card to get started. Upgrade when you&apos;re ready for paid plans.
+            <p className="mt-6 text-sm font-medium text-slate-600 dark:text-zinc-400">
+              14 days free trial + no credit card required.
+            </p>
+            <p className="mt-1 text-sm text-slate-400 dark:text-zinc-500">
+              Subscribe any time in-app via Stripe; if you pay mid-trial, billing lines up so your{" "}
+              <span className="font-medium text-slate-600 dark:text-zinc-400">first charge is after</span> your
+              original trial end — you keep the days left on the clock.
             </p>
           </div>
           <div className="flex w-full max-w-md flex-1 flex-col lg:max-w-lg">
@@ -267,13 +272,20 @@ export function LandingPage({ isAuthenticated }: LandingPageProps) {
             Simple, transparent pricing
           </h2>
           <p className="mb-12 text-slate-500 dark:text-zinc-400">
-            Placeholder numbers for launch — confirm VAT and trial terms before you go live.
+            <span className="font-medium text-slate-700 dark:text-zinc-300">
+              14 days free trial + no credit card required.
+            </span>{" "}
+            Example prices for launch — confirm VAT before you go live.
           </p>
 
           <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-10 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
             <div className="absolute right-0 top-0 rounded-bl-lg bg-slate-900 px-4 py-1 text-xs font-bold uppercase tracking-widest text-white dark:bg-zinc-100 dark:text-zinc-900">
               Example plan
             </div>
+            <p className="mb-6 rounded-xl bg-slate-50 px-4 py-3 text-left text-sm text-slate-600 dark:bg-zinc-800/80 dark:text-zinc-300">
+              Start on the trial with no card. If you subscribe early, Stripe is set so you still get your
+              full trial window — you are not charged until the original trial end date.
+            </p>
             <h3 className="mb-4 text-lg font-bold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
               Viewing feedback
             </h3>
@@ -309,7 +321,7 @@ export function LandingPage({ isAuthenticated }: LandingPageProps) {
             </Link>
             <p className="mt-4 text-xs text-slate-400 dark:text-zinc-500">
               Example figures for launch (yearly saves <span className="tabular-nums">£24</span> / ~17% vs monthly for a
-              full year). Confirm VAT and trial terms before you go live.
+              full year). Trial: 14 days, no card to register; paid checkout uses Stripe.
             </p>
           </div>
         </div>
