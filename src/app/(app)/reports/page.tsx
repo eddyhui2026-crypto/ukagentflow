@@ -34,6 +34,7 @@ export default async function ReportsPage() {
         <form
           method="GET"
           action="/api/reports/feedback"
+          data-tour="onboarding-reports-form"
           className="mt-8 space-y-6 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
         >
           <div className="space-y-1.5">

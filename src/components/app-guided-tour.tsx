@@ -1,11 +1,16 @@
 "use client";
 
+import {
+  GUIDED_TOUR_TRACKS,
+  type TourTrackId,
+} from "@/lib/guided-tour/tracks";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
 import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useState,
   useTransition,
 } from "react";
@@ -16,21 +21,8 @@ import { cn } from "@/lib/utils";
 
 const PAD = 8;
 const Z_OVERLAY = 220;
-
-function isPropertyDetailPath(pathname: string): boolean {
-  const parts = pathname.split("/").filter(Boolean);
-  return parts.length === 2 && parts[0] === "properties" && parts[1] !== "new";
-}
-
-function isViewingsNewPath(pathname: string): boolean {
-  const parts = pathname.split("/").filter(Boolean);
-  return (
-    parts.length === 4 &&
-    parts[0] === "properties" &&
-    parts[2] === "viewings" &&
-    parts[3] === "new"
-  );
-}
+const TOOLTIP_EST_HEIGHT = 210;
+const TOOLTIP_GAP = 16;
 
 function useIsMdBreakpoint(): boolean {
   const query = "(min-width: 768px)";
@@ -47,49 +39,60 @@ function useIsMdBreakpoint(): boolean {
   return mounted ? isMd : true;
 }
 
-function stepFromPath(pathname: string, listingSale: boolean): number {
-  if (isViewingsNewPath(pathname)) return 5;
-  if (isPropertyDetailPath(pathname)) return 4;
-  if (pathname === "/properties/new") return 3;
-  if (pathname === "/properties" && listingSale) return 2;
-  return 1;
-}
+function computeTooltipStyle(rect: DOMRect | null): React.CSSProperties {
+  const vw = typeof window !== "undefined" ? window.innerWidth : 400;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+  const tw = Math.min(352, vw - 32);
 
-const STEP_COPY: Record<
-  number,
-  { title: string; body: string; desktopSelector: string; mobileSelector: string }
-> = {
-  1: {
-    title: "Open your sales listings",
-    desktopSelector: '[data-tour="onboarding-nav-for-sale"]',
-    mobileSelector: '[data-tour="onboarding-mobile-menu"]',
-    body: "Under **Properties**, click **For sale**. On your phone, open the menu (☰) first, then tap **For sale**.",
-  },
-  2: {
-    title: "Add a property",
-    desktopSelector: '[data-tour="onboarding-add-property"]',
-    mobileSelector: '[data-tour="onboarding-add-property"]',
-    body: "Click **+ Add property** to create an instruction. You’ll enter address, postcode, vendor, and whether it’s for sale or to let.",
-  },
-  3: {
-    title: "Fill in the instruction",
-    desktopSelector: '[data-tour="onboarding-property-form"]',
-    mobileSelector: '[data-tour="onboarding-property-form"]',
-    body: "Complete the form and save. You’ll land on the property page — that’s where viewings and feedback links live.",
-  },
-  4: {
-    title: "Book a viewing",
-    desktopSelector: '[data-tour="onboarding-schedule-viewing"]',
-    mobileSelector: '[data-tour="onboarding-schedule-viewing"]',
-    body: "Click **+ Schedule viewing** to add a date, buyers, and choose automatic invite emails or your own copy-paste drafts.",
-  },
-  5: {
-    title: "Send feedback links",
-    desktopSelector: '[data-tour="onboarding-viewing-form"]',
-    mobileSelector: '[data-tour="onboarding-viewing-form"]',
-    body: "Add buyer names and emails, pick how links are delivered, then save. Buyers get personal links to leave structured feedback after the viewing.",
-  },
-};
+  if (!rect) {
+    return {
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: tw,
+    };
+  }
+
+  const spaceBelow = vh - rect.bottom - TOOLTIP_GAP;
+  const spaceAbove = rect.top - TOOLTIP_GAP;
+  const bigBlock = rect.height > 200 || rect.bottom > vh * 0.52;
+
+  let top: number;
+  if ((bigBlock || spaceBelow < TOOLTIP_EST_HEIGHT) && spaceAbove >= TOOLTIP_EST_HEIGHT * 0.75) {
+    top = Math.max(TOOLTIP_GAP, rect.top - TOOLTIP_EST_HEIGHT - TOOLTIP_GAP);
+  } else if (spaceBelow >= TOOLTIP_GAP) {
+    top = Math.min(rect.bottom + TOOLTIP_GAP, vh - TOOLTIP_EST_HEIGHT - TOOLTIP_GAP);
+  } else {
+    top = TOOLTIP_GAP;
+  }
+
+  let left = Math.max(TOOLTIP_GAP, Math.min(rect.left, vw - tw - TOOLTIP_GAP));
+
+  const estBottom = top + TOOLTIP_EST_HEIGHT;
+  const estRight = left + tw;
+  const overlapsY = estBottom > rect.top && top < rect.bottom;
+  const overlapsX = estRight > rect.left && left < rect.right;
+  if (overlapsY && overlapsX) {
+    const above = rect.top - TOOLTIP_EST_HEIGHT - TOOLTIP_GAP;
+    if (above >= TOOLTIP_GAP) {
+      top = above;
+    } else {
+      const rightOf = rect.right + TOOLTIP_GAP;
+      if (rightOf + tw <= vw - TOOLTIP_GAP) {
+        left = rightOf;
+        top = Math.max(TOOLTIP_GAP, Math.min(rect.top, vh - TOOLTIP_EST_HEIGHT - TOOLTIP_GAP));
+      } else {
+        const leftOf = rect.left - tw - TOOLTIP_GAP;
+        if (leftOf >= TOOLTIP_GAP) {
+          left = leftOf;
+          top = Math.max(TOOLTIP_GAP, Math.min(rect.top, vh - TOOLTIP_EST_HEIGHT - TOOLTIP_GAP));
+        }
+      }
+    }
+  }
+
+  return { top, left, width: tw };
+}
 
 function renderBoldSegments(text: string): ReactNode[] {
   const parts = text.split("**");
@@ -111,40 +114,44 @@ function renderBoldSegments(text: string): ReactNode[] {
 
 export function AppGuidedTour({
   open,
+  track,
   onClose,
 }: {
   open: boolean;
+  track: TourTrackId;
   onClose: () => void;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const listingSale = searchParams.get("listing") !== "letting";
   const isMd = useIsMdBreakpoint();
   const [step, setStep] = useState(1);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
   const [, startTransition] = useTransition();
 
+  const def = GUIDED_TOUR_TRACKS[track];
+  const doneStep = def.doneStep;
+  const lastContentStep = def.lastContentStep;
+
   useEffect(() => {
     setPortalEl(document.body);
   }, []);
 
   useEffect(() => {
-    if (!open) setStep(1);
-  }, [open]);
+    if (!open) {
+      setStep(1);
+      return;
+    }
+    const t = GUIDED_TOUR_TRACKS[track].stepFromPath(pathname, searchParams);
+    setStep((s) => Math.max(s, t));
+  }, [open, pathname, searchParams, track]);
 
-  useEffect(() => {
-    if (!open) return;
-    const target = stepFromPath(pathname, listingSale);
-    setStep((s) => Math.max(s, target));
-  }, [open, pathname, listingSale]);
-
-  const meta = STEP_COPY[Math.min(Math.max(step, 1), 5)] ?? STEP_COPY[1];
+  const meta = def.steps[Math.min(Math.max(step, 1), lastContentStep)] ?? def.steps[1];
   const selector = isMd ? meta.desktopSelector : meta.mobileSelector;
 
   useLayoutEffect(() => {
-    if (!open || step >= 6) {
+    if (!open || step >= doneStep) {
       setRect(null);
       return;
     }
@@ -154,36 +161,38 @@ export function AppGuidedTour({
       return;
     }
     setRect(node.getBoundingClientRect());
-  }, [open, step, selector, pathname, isMd]);
+  }, [open, step, selector, pathname, isMd, doneStep]);
 
   const updateRect = useCallback(() => {
-    if (!open || step >= 6) return;
+    if (!open || step >= doneStep) return;
     const node = document.querySelector(selector);
     if (!node || !(node instanceof HTMLElement)) {
       setRect(null);
       return;
     }
     setRect(node.getBoundingClientRect());
-  }, [open, step, selector]);
+  }, [open, step, selector, doneStep]);
 
   useEffect(() => {
-    if (!open || step >= 6) return;
+    if (!open || step >= doneStep) return;
     window.addEventListener("scroll", updateRect, true);
     window.addEventListener("resize", updateRect);
     return () => {
       window.removeEventListener("scroll", updateRect, true);
       window.removeEventListener("resize", updateRect);
     };
-  }, [open, step, updateRect]);
+  }, [open, step, updateRect, doneStep]);
 
   useEffect(() => {
-    if (!open || step >= 6) return;
+    if (!open || step >= doneStep) return;
     const node = document.querySelector(selector);
     if (!node || !(node instanceof HTMLElement)) return;
     const ro = new ResizeObserver(updateRect);
     ro.observe(node);
     return () => ro.disconnect();
-  }, [open, step, selector, updateRect]);
+  }, [open, step, selector, updateRect, doneStep]);
+
+  const tooltipStyle = useMemo(() => computeTooltipStyle(rect), [rect]);
 
   function skipTour() {
     startTransition(async () => {
@@ -211,7 +220,7 @@ export function AppGuidedTour({
 
   return createPortal(
     <>
-      {step < 6 && rect ? (
+      {step < doneStep && rect ? (
         <div
           className={cn(
             "pointer-events-none fixed rounded-lg",
@@ -227,7 +236,7 @@ export function AppGuidedTour({
           }}
           aria-hidden
         />
-      ) : step < 6 ? (
+      ) : step < doneStep ? (
         <div
           className="fixed inset-0 bg-zinc-950/70"
           style={{ zIndex: Z_OVERLAY - 1 }}
@@ -235,29 +244,15 @@ export function AppGuidedTour({
         />
       ) : null}
 
-      {step < 6 ? (
+      {step < doneStep ? (
         <div
-          className="pointer-events-auto fixed z-[225] w-[min(22rem,calc(100vw-2rem))]"
-          style={
-            rect
-              ? {
-                  top: Math.min(rect.bottom + PAD * 2, window.innerHeight - 160),
-                  left: Math.min(
-                    Math.max(16, rect.left),
-                    window.innerWidth - 16 - Math.min(352, window.innerWidth - 32),
-                  ),
-                }
-              : {
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                }
-          }
+          className="pointer-events-auto fixed z-[225] max-h-[min(42vh,320px)] overflow-y-auto rounded-xl shadow-xl"
+          style={tooltipStyle}
           role="dialog"
           aria-modal="true"
           aria-labelledby="guided-tour-title"
         >
-          <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-xl dark:border-zinc-600 dark:bg-zinc-900">
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-600 dark:bg-zinc-900">
             <h2 id="guided-tour-title" className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
               {meta.title}
             </h2>
@@ -268,8 +263,8 @@ export function AppGuidedTour({
               <Button type="button" variant="outline" size="sm" onClick={skipTour}>
                 Skip tour
               </Button>
-              {step === 5 ? (
-                <Button type="button" size="sm" onClick={() => setStep(6)}>
+              {step === lastContentStep ? (
+                <Button type="button" size="sm" onClick={() => setStep(doneStep)}>
                   Continue
                 </Button>
               ) : null}
@@ -291,7 +286,7 @@ export function AppGuidedTour({
               You&apos;re set
             </h2>
             <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-              You can restart this tour any time from <strong className="font-medium text-zinc-800 dark:text-zinc-200">Guided tour</strong> in the top bar.
+              Choose another topic from <strong className="font-medium text-zinc-800 dark:text-zinc-200">Guided tour</strong> any time.
             </p>
             <div className="mt-6 flex justify-end">
               <Button type="button" size="sm" onClick={finishTour}>

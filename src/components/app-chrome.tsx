@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import type { Session } from "next-auth";
-import { Map, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState, useTransition } from "react";
 import { dismissAppOnboardingIntroAction } from "@/app/(app)/onboarding-actions";
 import { signOutAction } from "@/app/(app)/actions";
 import { AppGuidedTour } from "@/components/app-guided-tour";
+import { GuidedTourPicker } from "@/components/guided-tour-picker";
+import type { TourTrackId } from "@/lib/guided-tour/tracks";
 import { AppHeaderGreeting } from "@/components/app-header-greeting";
 import { AppHeaderTicker } from "@/components/app-header-ticker";
 import { AppOnboardingIntroHint } from "@/components/app-onboarding-intro-hint";
@@ -32,13 +34,15 @@ export function AppChrome({
   const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [guidedTourOpen, setGuidedTourOpen] = useState(false);
+  const [guidedTourTrack, setGuidedTourTrack] = useState<TourTrackId>("sale");
   const [, startTransition] = useTransition();
 
-  function startGuidedTour() {
+  function startGuidedTourWithTrack(track: TourTrackId) {
     startTransition(async () => {
       await dismissAppOnboardingIntroAction();
       router.refresh();
     });
+    setGuidedTourTrack(track);
     setGuidedTourOpen(true);
   }
 
@@ -132,26 +136,7 @@ export function AppChrome({
               <AppHeaderGreeting session={session} />
             </div>
             <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="hidden h-8 gap-1 px-2 text-xs sm:inline-flex sm:h-9 sm:px-2.5 sm:text-sm"
-                onClick={startGuidedTour}
-              >
-                <Map className="size-3.5 shrink-0" aria-hidden />
-                Guided tour
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="sm:hidden"
-                aria-label="Guided tour"
-                onClick={startGuidedTour}
-              >
-                <Map className="size-4" aria-hidden />
-              </Button>
+              <GuidedTourPicker onPick={startGuidedTourWithTrack} />
               <ReportProblemControl />
               <Link
                 href="/"
@@ -167,11 +152,18 @@ export function AppChrome({
             </div>
           </div>
           <AppHeaderTicker />
-          {showIntroHint ? <AppOnboardingIntroHint onStartTour={startGuidedTour} /> : null}
+          {showIntroHint ? (
+            <AppOnboardingIntroHint onStartTour={() => startGuidedTourWithTrack("sale")} />
+          ) : null}
         </header>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
-      <AppGuidedTour open={guidedTourOpen} onClose={() => setGuidedTourOpen(false)} />
+      <AppGuidedTour
+        key={guidedTourTrack}
+        open={guidedTourOpen}
+        track={guidedTourTrack}
+        onClose={() => setGuidedTourOpen(false)}
+      />
     </div>
   );
 }

@@ -86,7 +86,13 @@ export function AppSidebar({
               key={href}
               href={href}
               onClick={onNavigate}
-              data-tour={listing === "sale" ? "onboarding-nav-for-sale" : undefined}
+              data-tour={
+                listing === "sale"
+                  ? "onboarding-nav-for-sale"
+                  : listing === "letting"
+                    ? "onboarding-nav-letting"
+                    : undefined
+              }
               className={cn(
                 "rounded-md px-3 py-2 text-sm font-medium",
                 active
@@ -107,11 +113,18 @@ export function AppSidebar({
               : href === "/reports"
                 ? pathname === "/reports" || pathname.startsWith("/reports/")
                 : pathname === href || pathname.startsWith(`${href}/`);
+          const tourAttr =
+            href === "/reports"
+              ? "onboarding-nav-reports"
+              : href === "/settings"
+                ? "onboarding-nav-settings"
+                : undefined;
           return (
             <Link
               key={href}
               href={href}
               onClick={onNavigate}
+              data-tour={tourAttr}
               className={cn(
                 "rounded-md px-3 py-2 text-sm font-medium",
                 active

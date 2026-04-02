@@ -32,7 +32,8 @@ export function AppOnboardingIntroHint({
         >
           Guided tour
         </button>{" "}
-        for a walkthrough — add a property, then book a viewing and send feedback links.
+        for walkthroughs (sales, lettings, reports, settings). The bar above lists every topic — or start with
+        sales: add a property, book a viewing, send feedback links.
       </p>
       <Button
         type="button"

@@ -133,8 +133,9 @@ export default async function SettingsPage() {
             />
           }
         >
-          <SettingsSectionTabs
-            panels={{
+          <div data-tour="onboarding-settings-shell">
+            <SettingsSectionTabs
+              panels={{
               invite: (
                 <div>
                   <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
@@ -363,6 +364,7 @@ export default async function SettingsPage() {
               ),
             }}
           />
+          </div>
         </Suspense>
       </div>
     </div>
