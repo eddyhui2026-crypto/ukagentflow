@@ -10,6 +10,7 @@ import { dismissAppOnboardingIntroAction } from "@/app/(app)/onboarding-actions"
 import { signOutAction } from "@/app/(app)/actions";
 import { AppGuidedTour } from "@/components/app-guided-tour";
 import { GuidedTourPicker } from "@/components/guided-tour-picker";
+import { InteractiveOnboardingWizard } from "@/components/interactive-onboarding-wizard";
 import type { TourTrackId } from "@/lib/guided-tour/tracks";
 import { AppHeaderGreeting } from "@/components/app-header-greeting";
 import { AppHeaderTicker } from "@/components/app-header-ticker";
@@ -35,6 +36,7 @@ export function AppChrome({
   session,
   sidebarRecent24hCount = 0,
   showIntroHint = false,
+  showInteractiveOnboarding = false,
   children,
 }: {
   session: Session;
@@ -42,6 +44,8 @@ export function AppChrome({
   sidebarRecent24hCount?: number;
   /** First session: show one-time hint that Guided tour exists */
   showIntroHint?: boolean;
+  /** First-run modal wizard (until completed or skipped) */
+  showInteractiveOnboarding?: boolean;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -183,6 +187,7 @@ export function AppChrome({
         track={guidedTourTrack}
         onClose={() => setGuidedTourOpen(false)}
       />
+      {showInteractiveOnboarding ? <InteractiveOnboardingWizard session={session} /> : null}
     </div>
   );
 }

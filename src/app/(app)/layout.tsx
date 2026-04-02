@@ -3,6 +3,7 @@ import { AppChrome } from "@/components/app-chrome";
 import { countFeedbackSinceForCompany, countPrequalSinceForCompany } from "@/lib/dashboard/queries";
 import { dashboardRollingRecentSince } from "@/lib/dashboard/recent-window";
 import { getUserOnboardingIntroDismissed } from "@/lib/users/onboarding";
+import { getUserInteractiveOnboardingCompleted } from "@/lib/users/interactive-onboarding";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({
@@ -24,13 +25,16 @@ export default async function AppLayout({
 
   const introDismissed = await getUserOnboardingIntroDismissed(session.user.id);
   const isFirstAuthSession = session.user.previousLoginAt == null;
-  const showIntroHint = isFirstAuthSession && !introDismissed;
+  const interactiveDone = await getUserInteractiveOnboardingCompleted(session.user.id);
+  const showInteractiveOnboarding = !interactiveDone;
+  const showIntroHint = interactiveDone && isFirstAuthSession && !introDismissed;
 
   return (
     <AppChrome
       session={session}
       sidebarRecent24hCount={sidebarRecent24hCount}
       showIntroHint={showIntroHint}
+      showInteractiveOnboarding={showInteractiveOnboarding}
     >
       {children}
     </AppChrome>
