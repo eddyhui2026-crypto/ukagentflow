@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getCompanyPrequalShareTemplates } from "@/lib/companies/queries";
 import { getPropertyForCompany } from "@/lib/properties/queries";
@@ -28,8 +28,12 @@ export default async function PropertyDetailPage({
 
   const { id } = await params;
   const sp = await searchParams;
+  const feedbackParam = sp.feedback?.trim() || null;
+  if (feedbackParam && sp.tab !== "feedback") {
+    redirect(`/properties/${id}?tab=feedback&feedback=${encodeURIComponent(feedbackParam)}`);
+  }
   const tab = sp.tab === "feedback" ? "feedback" : "overview";
-  const openFeedbackId = sp.feedback?.trim() || null;
+  const openFeedbackId = feedbackParam;
 
   const [property, prequalShareRow] = await Promise.all([
     getPropertyForCompany(id, session.user.companyId),
@@ -106,7 +110,19 @@ export default async function PropertyDetailPage({
         {tab === "overview" ? (
           <>
             <p className="mt-6 text-sm text-zinc-600 dark:text-zinc-400">
-              Manage scheduled viewings and buyer feedback links for this instruction.
+              Manage scheduled viewings and buyer feedback links for this instruction.{" "}
+              <strong className="font-medium text-zinc-800 dark:text-zinc-200">
+                Post-viewing submissions
+              </strong>{" "}
+              (table with <strong className="font-medium">Full feedback</strong> beside each email) live
+              on the{" "}
+              <Link
+                href={`/properties/${id}?tab=feedback`}
+                className="font-medium text-blue-600 underline underline-offset-2 hover:no-underline dark:text-blue-400"
+              >
+                Feedback
+              </Link>{" "}
+              tab — not on Overview.
             </p>
             <PropertyHeroImageCard
               propertyId={id}

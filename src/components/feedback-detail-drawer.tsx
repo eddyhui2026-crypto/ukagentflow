@@ -89,7 +89,7 @@ export function FeedbackDetailDrawerTrigger({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="feedback-drawer-title"
-                className="fixed inset-y-0 left-0 flex w-full max-w-[min(100vw,28rem)] flex-col border-r border-zinc-200 bg-white shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 sm:max-w-lg"
+                className="fixed inset-y-0 right-0 flex w-full max-w-[min(100vw,28rem)] flex-col border-l border-zinc-200 bg-white shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 sm:max-w-lg"
                 style={{ zIndex: Z_PANEL }}
               >
                 <header className="flex shrink-0 items-start justify-between gap-3 border-b border-zinc-200 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] dark:border-zinc-800">
