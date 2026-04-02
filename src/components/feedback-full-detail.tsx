@@ -47,6 +47,30 @@ function lettingsTenantLine(
   return bits.join(" · ") || "—";
 }
 
+export type FeedbackFullDetailProps = {
+  listingType: ListingType;
+  rating: number;
+  interestLevel: string;
+  priceOpinion: string;
+  wantsSecondViewing: boolean;
+  replyLagDays: number;
+  buyerPosition: string | null;
+  hasAip: boolean | null;
+  propertyHighlights: string;
+  negativeFeedbackTags: string;
+  likedText: string | null;
+  dislikedText: string | null;
+  comment: string | null;
+  targetMoveInDate: string | null;
+  occupantCount: string | null;
+  hasPets: boolean | null;
+  petsDetail: string | null;
+  householdIncomeBand: string | null;
+  className?: string;
+  /** `comfortable` = larger type for drawer / mobile reading. */
+  variant?: "compact" | "comfortable";
+};
+
 export function FeedbackFullDetail({
   listingType,
   rating,
@@ -67,27 +91,9 @@ export function FeedbackFullDetail({
   petsDetail,
   householdIncomeBand,
   className,
-}: {
-  listingType: ListingType;
-  rating: number;
-  interestLevel: string;
-  priceOpinion: string;
-  wantsSecondViewing: boolean;
-  replyLagDays: number;
-  buyerPosition: string | null;
-  hasAip: boolean | null;
-  propertyHighlights: string;
-  negativeFeedbackTags: string;
-  likedText: string | null;
-  dislikedText: string | null;
-  comment: string | null;
-  targetMoveInDate: string | null;
-  occupantCount: string | null;
-  hasPets: boolean | null;
-  petsDetail: string | null;
-  householdIncomeBand: string | null;
-  className?: string;
-}) {
+  variant = "compact",
+}: FeedbackFullDetailProps) {
+  const isComfort = variant === "comfortable";
   const isLet = listingType === "letting";
   const hl = isLet
     ? lettingsHighlightsToDisplayString(propertyHighlights)
@@ -96,30 +102,47 @@ export function FeedbackFullDetail({
     ? lettingsNegativesToDisplayString(negativeFeedbackTags)
     : negativesToDisplayString(negativeFeedbackTags);
 
+  const rowPad = isComfort ? "py-3 gap-1" : "py-2 gap-0.5";
+  const dtClass = cn(
+    "font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400",
+    isComfort ? "text-xs" : "text-[10px]",
+  );
+  const ddClass = cn(
+    "text-zinc-800 dark:text-zinc-200",
+    isComfort ? "text-sm leading-relaxed" : "text-xs",
+  );
+  const textDdClass = cn(ddClass, "whitespace-pre-wrap break-words");
+
   const row = (label: string, value: string) => (
-    <div className="grid gap-0.5 border-b border-zinc-100 py-2 last:border-b-0 dark:border-zinc-800/80">
-      <dt className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-        {label}
-      </dt>
-      <dd className="text-xs text-zinc-800 dark:text-zinc-200">{value}</dd>
+    <div
+      className={cn(
+        "grid border-b border-zinc-100 last:border-b-0 dark:border-zinc-800/80",
+        rowPad,
+      )}
+    >
+      <dt className={dtClass}>{label}</dt>
+      <dd className={ddClass}>{value}</dd>
     </div>
   );
 
   const textBlock = (label: string, value: string | null) => (
-    <div className="grid gap-0.5 border-b border-zinc-100 py-2 last:border-b-0 dark:border-zinc-800/80">
-      <dt className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-        {label}
-      </dt>
-      <dd className="whitespace-pre-wrap break-words text-xs text-zinc-800 dark:text-zinc-200">
-        {value?.trim() ? value.trim() : "—"}
-      </dd>
+    <div
+      className={cn(
+        "grid border-b border-zinc-100 last:border-b-0 dark:border-zinc-800/80",
+        rowPad,
+      )}
+    >
+      <dt className={dtClass}>{label}</dt>
+      <dd className={textDdClass}>{value?.trim() ? value.trim() : "—"}</dd>
     </div>
   );
 
   return (
     <div
       className={cn(
-        "rounded-md border border-zinc-200 bg-zinc-50/80 px-2.5 py-1 dark:border-zinc-700 dark:bg-zinc-900/50",
+        isComfort
+          ? "rounded-lg bg-zinc-50/60 px-2 py-1 dark:bg-zinc-800/25"
+          : "rounded-md border border-zinc-200 bg-zinc-50/80 px-2.5 py-1 dark:border-zinc-700 dark:bg-zinc-900/50",
         className,
       )}
     >

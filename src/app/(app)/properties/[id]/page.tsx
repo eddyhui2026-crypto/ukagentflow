@@ -19,7 +19,7 @@ export default async function PropertyDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; feedback?: string }>;
 }) {
   const session = await auth();
   if (!session?.user?.companyId) {
@@ -29,6 +29,7 @@ export default async function PropertyDetailPage({
   const { id } = await params;
   const sp = await searchParams;
   const tab = sp.tab === "feedback" ? "feedback" : "overview";
+  const openFeedbackId = sp.feedback?.trim() || null;
 
   const [property, prequalShareRow] = await Promise.all([
     getPropertyForCompany(id, session.user.companyId),
@@ -179,7 +180,11 @@ export default async function PropertyDetailPage({
                 <div className="mt-8 h-56 animate-pulse rounded-lg bg-zinc-200 dark:bg-zinc-800" />
               }
             >
-              <PropertyFeedbackCard propertyId={id} companyId={session.user.companyId} />
+              <PropertyFeedbackCard
+                propertyId={id}
+                companyId={session.user.companyId}
+                openFeedbackId={openFeedbackId}
+              />
             </Suspense>
           </>
         )}

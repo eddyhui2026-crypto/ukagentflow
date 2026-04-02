@@ -1,5 +1,5 @@
 import { AgentFollowUpSelect } from "@/components/agent-follow-up-select";
-import { FeedbackFullDetail } from "@/components/feedback-full-detail";
+import { FeedbackDetailDrawerTrigger } from "@/components/feedback-detail-drawer";
 import { FeedbackEmptyState } from "@/components/feedback-empty-state";
 import { listFeedbackForProperty } from "@/lib/feedback/queries";
 import type { AgentFollowUp } from "@/lib/feedback/agent-follow-up";
@@ -87,9 +87,12 @@ function snippet(text: string | null, max = 72) {
 export async function PropertyFeedbackCard({
   propertyId,
   companyId,
+  openFeedbackId = null,
 }: {
   propertyId: string;
   companyId: string;
+  /** When set (e.g. from ?feedback=), opens that row’s drawer on load. */
+  openFeedbackId?: string | null;
 }) {
   const rows = await listFeedbackForProperty(propertyId, companyId);
 
@@ -199,33 +202,36 @@ export async function PropertyFeedbackCard({
                         >
                           {row.buyer_email}
                         </a>
-                        <details className="min-w-0 max-w-full">
-                          <summary className="cursor-pointer list-none text-xs font-medium text-blue-600 hover:underline dark:text-blue-400 [&::-webkit-details-marker]:hidden">
-                            <span className="underline">Full feedback</span>
-                          </summary>
-                          <div className="mt-2 max-h-[min(55vh,20rem)] overflow-y-auto overscroll-y-contain pr-0.5">
-                            <FeedbackFullDetail
-                              listingType={row.listing_type}
-                              rating={row.rating}
-                              interestLevel={row.interest_level}
-                              priceOpinion={row.price_opinion}
-                              wantsSecondViewing={row.wants_second_viewing}
-                              replyLagDays={row.reply_lag_days}
-                              buyerPosition={row.buyer_position}
-                              hasAip={row.has_aip}
-                              propertyHighlights={row.property_highlights}
-                              negativeFeedbackTags={row.negative_feedback_tags}
-                              likedText={row.liked_text}
-                              dislikedText={row.disliked_text}
-                              comment={row.comment}
-                              targetMoveInDate={row.target_move_in_date}
-                              occupantCount={row.occupant_count}
-                              hasPets={row.has_pets}
-                              petsDetail={row.pets_detail}
-                              householdIncomeBand={row.household_income_band}
-                            />
-                          </div>
-                        </details>
+                        <div className="min-w-0 max-w-full">
+                          <FeedbackDetailDrawerTrigger
+                            defaultOpen={openFeedbackId != null && row.id === openFeedbackId}
+                            subtitle={`${row.buyer_name} · Viewing ${formatViewDate(row.viewing_date)}`}
+                            replaceHrefOnClose={
+                              openFeedbackId != null && row.id === openFeedbackId
+                                ? `/properties/${propertyId}?tab=feedback`
+                                : undefined
+                            }
+                            listingType={row.listing_type}
+                            rating={row.rating}
+                            interestLevel={row.interest_level}
+                            priceOpinion={row.price_opinion}
+                            wantsSecondViewing={row.wants_second_viewing}
+                            replyLagDays={row.reply_lag_days}
+                            buyerPosition={row.buyer_position}
+                            hasAip={row.has_aip}
+                            propertyHighlights={row.property_highlights}
+                            negativeFeedbackTags={row.negative_feedback_tags}
+                            likedText={row.liked_text}
+                            dislikedText={row.disliked_text}
+                            comment={row.comment}
+                            targetMoveInDate={row.target_move_in_date}
+                            occupantCount={row.occupant_count}
+                            hasPets={row.has_pets}
+                            petsDetail={row.pets_detail}
+                            householdIncomeBand={row.household_income_band}
+                            triggerClassName="mt-1"
+                          />
+                        </div>
                       </div>
                     </td>
                     <td className="hidden max-w-[7rem] px-3 py-3 text-xs text-zinc-600 dark:text-zinc-400 lg:table-cell">
