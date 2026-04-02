@@ -37,6 +37,7 @@ export function AppChrome({
   sidebarRecent24hCount = 0,
   showIntroHint = false,
   showInteractiveOnboarding = false,
+  showInternalMarketingNav = false,
   children,
 }: {
   session: Session;
@@ -46,6 +47,8 @@ export function AppChrome({
   showIntroHint?: boolean;
   /** First-run modal wizard (until completed or skipped) */
   showInteractiveOnboarding?: boolean;
+  /** INTERNAL_MARKETING_OUTREACH_EMAILS allowlist */
+  showInternalMarketingNav?: boolean;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -90,7 +93,10 @@ export function AppChrome({
             <aside className="w-52 border-r border-zinc-200 bg-zinc-100/80 dark:border-zinc-800 dark:bg-zinc-900/50" />
           }
         >
-          <AppSidebar sidebarRecent24hCount={sidebarRecent24hCount} />
+          <AppSidebar
+            sidebarRecent24hCount={sidebarRecent24hCount}
+            showInternalMarketingNav={showInternalMarketingNav}
+          />
         </Suspense>
       </div>
 
@@ -128,6 +134,7 @@ export function AppChrome({
                   <Suspense fallback={null}>
                     <AppSidebar
                       sidebarRecent24hCount={sidebarRecent24hCount}
+                      showInternalMarketingNav={showInternalMarketingNav}
                       onNavigate={() => setMobileNavOpen(false)}
                       hideBrandHeader
                     />

@@ -18,10 +18,12 @@ const tailNav = [
 
 export function AppSidebar({
   sidebarRecent24hCount = 0,
+  showInternalMarketingNav = false,
   onNavigate,
   hideBrandHeader = false,
 }: {
   sidebarRecent24hCount?: number;
+  showInternalMarketingNav?: boolean;
   /** Close mobile drawer after navigating */
   onNavigate?: () => void;
   /** Mobile drawer: top row is the close button — omit duplicate brand strip */
@@ -136,6 +138,24 @@ export function AppSidebar({
             </Link>
           );
         })}
+
+        {showInternalMarketingNav ? (
+          <>
+            <div className="my-2 border-t border-zinc-200 pt-2 dark:border-zinc-800" />
+            <Link
+              href="/internal/marketing-outreach"
+              onClick={onNavigate}
+              className={cn(
+                "rounded-md px-3 py-2 text-sm font-medium",
+                pathname.startsWith("/internal/marketing-outreach")
+                  ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-50"
+                  : "text-amber-800 hover:bg-amber-100/80 hover:text-amber-950 dark:text-amber-200 dark:hover:bg-amber-950/50 dark:hover:text-amber-100",
+              )}
+            >
+              Outreach (internal)
+            </Link>
+          </>
+        ) : null}
       </nav>
     </aside>
   );

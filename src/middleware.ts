@@ -21,7 +21,8 @@ export default auth((req) => {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/properties") ||
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/reports");
+    pathname.startsWith("/reports") ||
+    pathname.startsWith("/internal");
 
   if (needsAuth && !isAuthed) {
     const login = new URL("/login", req.url);
@@ -48,6 +49,7 @@ export const config = {
     "/settings/:path*",
     "/reports",
     "/reports/:path*",
+    "/internal/:path*",
     "/login",
     "/register",
     "/forgot-password",

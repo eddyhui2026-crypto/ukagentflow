@@ -4,6 +4,7 @@ import { countFeedbackSinceForCompany, countPrequalSinceForCompany } from "@/lib
 import { dashboardRollingRecentSince } from "@/lib/dashboard/recent-window";
 import { getUserOnboardingIntroDismissed } from "@/lib/users/onboarding";
 import { getUserInteractiveOnboardingCompleted } from "@/lib/users/interactive-onboarding";
+import { isInternalMarketingOutreachAllowed } from "@/lib/internal/marketing-outreach-allowlist";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({
@@ -28,6 +29,7 @@ export default async function AppLayout({
   const interactiveDone = await getUserInteractiveOnboardingCompleted(session.user.id);
   const showInteractiveOnboarding = !interactiveDone;
   const showIntroHint = interactiveDone && isFirstAuthSession && !introDismissed;
+  const showInternalMarketingNav = isInternalMarketingOutreachAllowed(session.user.email);
 
   return (
     <AppChrome
@@ -35,6 +37,7 @@ export default async function AppLayout({
       sidebarRecent24hCount={sidebarRecent24hCount}
       showIntroHint={showIntroHint}
       showInteractiveOnboarding={showInteractiveOnboarding}
+      showInternalMarketingNav={showInternalMarketingNav}
     >
       {children}
     </AppChrome>
