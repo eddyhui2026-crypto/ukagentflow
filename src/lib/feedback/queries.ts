@@ -129,6 +129,7 @@ export type PropertyFeedbackRow = {
   id: string;
   viewing_date: string;
   buyer_name: string;
+  buyer_email: string;
   listing_type: ListingType;
   rating: number;
   interest_level: string;
@@ -161,6 +162,7 @@ export async function listFeedbackForProperty(
       f.id,
       v.viewing_date::text AS viewing_date,
       b.name AS buyer_name,
+      b.email AS buyer_email,
       f.listing_type::text AS listing_type,
       f.rating,
       f.interest_level::text AS interest_level,

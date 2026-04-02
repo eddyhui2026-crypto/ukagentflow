@@ -266,6 +266,7 @@ export type RecentFeedbackRow = {
   buyer_name: string;
   buyer_email: string;
   buyer_phone: string | null;
+  listing_type: "sale" | "letting";
   rating: number;
   interest_level: string;
   price_opinion: string;
@@ -274,6 +275,18 @@ export type RecentFeedbackRow = {
   submitted_at: Date | string;
   reply_lag_days: number;
   agent_follow_up: AgentFollowUp;
+  buyer_position: string | null;
+  has_aip: boolean | null;
+  property_highlights: string;
+  negative_feedback_tags: string;
+  liked_text: string | null;
+  disliked_text: string | null;
+  comment: string | null;
+  target_move_in_date: string | null;
+  occupant_count: string | null;
+  has_pets: boolean | null;
+  pets_detail: string | null;
+  household_income_band: string | null;
   /** Submitted within the dashboard rolling recent window (e.g. last 24h). */
   is_new_within_24h?: boolean;
 };
@@ -385,6 +398,7 @@ export async function listRecentFeedbackForCompany(
       b.name AS buyer_name,
       b.email AS buyer_email,
       b.phone AS buyer_phone,
+      f.listing_type::text AS listing_type,
       f.rating,
       COALESCE(f.interest_level::text, 'cold') AS interest_level,
       COALESCE(f.price_opinion::text, 'fair') AS price_opinion,
@@ -397,7 +411,19 @@ export async function listRecentFeedbackForCompany(
           (f.submitted_at AT TIME ZONE 'Europe/London')::date - v.viewing_date
         )::integer
       ) AS reply_lag_days,
-      f.agent_follow_up::text AS agent_follow_up
+      f.agent_follow_up::text AS agent_follow_up,
+      f.buyer_position::text AS buyer_position,
+      f.has_aip,
+      f.property_highlights,
+      f.negative_feedback_tags,
+      f.liked_text,
+      f.disliked_text,
+      f.comment,
+      f.target_move_in_date::text AS target_move_in_date,
+      f.occupant_count,
+      f.has_pets,
+      f.pets_detail,
+      f.household_income_band
     FROM feedback f
     INNER JOIN viewings v ON v.id = f.viewing_id
     INNER JOIN properties p ON p.id = v.property_id

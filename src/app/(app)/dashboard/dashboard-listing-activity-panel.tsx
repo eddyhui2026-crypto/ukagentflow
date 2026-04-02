@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { AgentFollowUpSelect } from '@/components/agent-follow-up-select';
 import { ContactOutreachLinks } from '@/components/contact-outreach-links';
+import { FeedbackFullDetail } from '@/components/feedback-full-detail';
 import { FeedbackEmptyState } from '@/components/feedback-empty-state';
 import type {
   RecentFeedbackRow,
@@ -617,12 +618,39 @@ export function DashboardListingActivityPanel({
                           </div>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-3 align-top">
+                      <td className="max-w-[16rem] px-3 py-3 align-top sm:max-w-[18rem]">
+                        <details className="group max-w-full">
+                          <summary className="cursor-pointer list-none text-xs font-medium text-blue-600 hover:underline dark:text-blue-400 [&::-webkit-details-marker]:hidden">
+                            <span className="underline">Full feedback</span>
+                          </summary>
+                          <div className="mt-2 max-h-[min(60vh,22rem)] overflow-y-auto overscroll-y-contain pr-0.5">
+                            <FeedbackFullDetail
+                              listingType={row.listing_type === 'letting' ? 'letting' : 'sale'}
+                              rating={row.rating}
+                              interestLevel={row.interest_level}
+                              priceOpinion={row.price_opinion}
+                              wantsSecondViewing={row.wants_second_viewing}
+                              replyLagDays={row.reply_lag_days}
+                              buyerPosition={row.buyer_position}
+                              hasAip={row.has_aip}
+                              propertyHighlights={row.property_highlights}
+                              negativeFeedbackTags={row.negative_feedback_tags}
+                              likedText={row.liked_text}
+                              dislikedText={row.disliked_text}
+                              comment={row.comment}
+                              targetMoveInDate={row.target_move_in_date}
+                              occupantCount={row.occupant_count}
+                              hasPets={row.has_pets}
+                              petsDetail={row.pets_detail}
+                              householdIncomeBand={row.household_income_band}
+                            />
+                          </div>
+                        </details>
                         <Link
                           href={`/properties/${row.property_id}?tab=feedback#feedback-${row.id}`}
-                          className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+                          className="mt-2 block text-[10px] font-medium text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
                         >
-                          Full feedback
+                          Open on property page
                         </Link>
                       </td>
                       <td className="w-[7.75rem] max-w-[7.75rem] px-2 py-3 align-top">

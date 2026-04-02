@@ -4,7 +4,8 @@ import Link from "next/link";
 import type { Session } from "next-auth";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Suspense, useEffect, useState, useTransition } from "react";
+import { Suspense, useEffect, useLayoutEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { dismissAppOnboardingIntroAction } from "@/app/(app)/onboarding-actions";
 import { signOutAction } from "@/app/(app)/actions";
 import { AppGuidedTour } from "@/components/app-guided-tour";
@@ -17,6 +18,18 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { ReportProblemControl } from "@/components/report-problem-control";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+/** Same document root as guided-tour portal so z-index compares reliably (fixes Android stacking quirks). */
+const Z_MOBILE_SCRIM_OVER_TOUR = 5020;
+const Z_MOBILE_DRAWER_OVER_TOUR = 5030;
+
+function useBodyPortalEl(): HTMLElement | null {
+  const [el, setEl] = useState<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    setEl(document.body);
+  }, []);
+  return el;
+}
 
 export function AppChrome({
   session,
@@ -32,6 +45,7 @@ export function AppChrome({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const mobileNavPortalEl = useBodyPortalEl();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [guidedTourOpen, setGuidedTourOpen] = useState(false);
   const [guidedTourTrack, setGuidedTourTrack] = useState<TourTrackId>("sale");
@@ -76,45 +90,50 @@ export function AppChrome({
         </Suspense>
       </div>
 
-      {mobileNavOpen ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-[45] bg-zinc-950/40 backdrop-blur-[1px] md:hidden"
-            aria-label="Close menu"
-            onClick={() => setMobileNavOpen(false)}
-          />
-          <div
-            id="app-mobile-nav"
-            className={cn(
-              "fixed inset-y-0 left-0 z-[50] flex w-[min(18rem,88vw)] flex-col shadow-xl md:hidden",
-              "border-r border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900",
-            )}
-          >
-            <div className="flex h-14 shrink-0 items-center justify-end border-b border-zinc-200 px-3 dark:border-zinc-800">
-              <Button
+      {mobileNavOpen && mobileNavPortalEl
+        ? createPortal(
+            <>
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
-                className="size-9 text-zinc-600 dark:text-zinc-300"
+                className="fixed inset-0 bg-zinc-950/40 md:hidden"
+                style={{ zIndex: guidedTourOpen ? Z_MOBILE_SCRIM_OVER_TOUR : 45 }}
                 aria-label="Close menu"
                 onClick={() => setMobileNavOpen(false)}
+              />
+              <div
+                id="app-mobile-nav"
+                className={cn(
+                  "fixed inset-y-0 left-0 flex w-[min(18rem,88vw)] flex-col shadow-xl md:hidden",
+                  "border-r border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900",
+                )}
+                style={{ zIndex: guidedTourOpen ? Z_MOBILE_DRAWER_OVER_TOUR : 50 }}
               >
-                <X className="size-5" aria-hidden />
-              </Button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto">
-              <Suspense fallback={null}>
-                <AppSidebar
-                  sidebarRecent24hCount={sidebarRecent24hCount}
-                  onNavigate={() => setMobileNavOpen(false)}
-                  hideBrandHeader
-                />
-              </Suspense>
-            </div>
-          </div>
-        </>
-      ) : null}
+                <div className="flex h-14 shrink-0 items-center justify-end border-b border-zinc-200 px-3 dark:border-zinc-800">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-9 text-zinc-600 dark:text-zinc-300"
+                    aria-label="Close menu"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    <X className="size-5" aria-hidden />
+                  </Button>
+                </div>
+                <div className="min-h-0 flex-1 overflow-y-auto">
+                  <Suspense fallback={null}>
+                    <AppSidebar
+                      sidebarRecent24hCount={sidebarRecent24hCount}
+                      onNavigate={() => setMobileNavOpen(false)}
+                      hideBrandHeader
+                    />
+                  </Suspense>
+                </div>
+              </div>
+            </>,
+            mobileNavPortalEl,
+          )
+        : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex shrink-0 flex-col border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">

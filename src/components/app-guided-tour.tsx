@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 const PAD = 8;
 const Z_OVERLAY = 220;
+const DIM_BG = "rgba(15, 15, 20, 0.72)";
 const TOOLTIP_EST_HEIGHT = 210;
 const TOOLTIP_GAP = 16;
 
@@ -37,6 +38,92 @@ function useIsMdBreakpoint(): boolean {
     return () => mq.removeEventListener("change", on);
   }, []);
   return mounted ? isMd : true;
+}
+
+/** Touch devices: skip spotlight motion (fewer repaints on iOS). */
+function useCoarsePointer(): boolean {
+  const [coarse, setCoarse] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    setCoarse(mq.matches);
+    const on = () => setCoarse(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return coarse;
+}
+
+type Hole = { t: number; l: number; w: number; h: number };
+
+/**
+ * Four solid panels instead of a 9999px box-shadow — much cheaper on Mobile Safari.
+ * pointer-events only on dimmed strips; the hole stays click-through to the target.
+ */
+function SpotlightMask({
+  hole,
+  zIndex,
+  transition,
+}: {
+  hole: Hole;
+  zIndex: number;
+  transition: string | undefined;
+}) {
+  const { t, l, w, h } = hole;
+  const base: React.CSSProperties = {
+    position: "fixed",
+    backgroundColor: DIM_BG,
+    zIndex,
+    pointerEvents: "auto",
+    transition,
+  };
+
+  return (
+    <>
+      <div style={{ ...base, top: 0, left: 0, right: 0, height: Math.max(0, t) }} />
+      <div
+        style={{
+          ...base,
+          top: t + h,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
+      />
+      <div
+        style={{
+          ...base,
+          top: t,
+          left: 0,
+          width: Math.max(0, l),
+          height: h,
+        }}
+      />
+      <div
+        style={{
+          ...base,
+          top: t,
+          left: l + w,
+          right: 0,
+          height: h,
+        }}
+      />
+      <div
+        className="pointer-events-none rounded-lg ring-2 ring-white/20"
+        style={{
+          position: "fixed",
+          top: t,
+          left: l,
+          width: w,
+          height: h,
+          zIndex: zIndex + 1,
+          transition,
+        }}
+        aria-hidden
+      />
+    </>
+  );
 }
 
 function computeTooltipStyle(rect: DOMRect | null): React.CSSProperties {
@@ -125,6 +212,7 @@ export function AppGuidedTour({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isMd = useIsMdBreakpoint();
+  const coarsePointer = useCoarsePointer();
   const [step, setStep] = useState(1);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
@@ -216,37 +304,37 @@ export function AppGuidedTour({
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  const spotlightTransition =
+    reduceMotion || coarsePointer
+      ? undefined
+      : "top 200ms ease-out, left 200ms ease-out, width 200ms ease-out, height 200ms ease-out";
+
+  const hole: Hole | null = rect
+    ? {
+        t: rect.top - PAD,
+        l: rect.left - PAD,
+        w: rect.width + PAD * 2,
+        h: rect.height + PAD * 2,
+      }
+    : null;
+
   const bodyRich = renderBoldSegments(meta.body);
 
   return createPortal(
     <>
-      {step < doneStep && rect ? (
-        <div
-          className={cn(
-            "pointer-events-none fixed rounded-lg",
-            reduceMotion ? "" : "transition-[top,left,width,height] duration-200 ease-out",
-          )}
-          style={{
-            top: rect.top - PAD,
-            left: rect.left - PAD,
-            width: rect.width + PAD * 2,
-            height: rect.height + PAD * 2,
-            boxShadow: "0 0 0 9999px rgba(15, 15, 20, 0.72)",
-            zIndex: Z_OVERLAY,
-          }}
-          aria-hidden
-        />
+      {step < doneStep && hole ? (
+        <SpotlightMask hole={hole} zIndex={Z_OVERLAY} transition={spotlightTransition} />
       ) : step < doneStep ? (
         <div
-          className="fixed inset-0 bg-zinc-950/70"
-          style={{ zIndex: Z_OVERLAY - 1 }}
+          className="fixed inset-0"
+          style={{ zIndex: Z_OVERLAY - 1, backgroundColor: DIM_BG }}
           aria-hidden
         />
       ) : null}
 
       {step < doneStep ? (
         <div
-          className="pointer-events-auto fixed z-[225] max-h-[min(42vh,320px)] overflow-y-auto rounded-xl shadow-xl"
+          className="pointer-events-auto fixed z-[225] max-h-[min(42vh,320px)] touch-manipulation overflow-y-auto overscroll-y-contain rounded-xl shadow-xl"
           style={tooltipStyle}
           role="dialog"
           aria-modal="true"
