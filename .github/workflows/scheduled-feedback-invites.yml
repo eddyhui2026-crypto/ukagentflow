@@ -26,6 +26,7 @@ jobs:
             echo "Set repository secrets CRON_INVOKE_URL and CRON_SECRET (same secret as on Vercel)."
             exit 1
           fi
-          curl -fsS -X GET "$CRON_INVOKE_URL" \
+          # -L: follow 301/307 (Vercel/host may redirect to canonical URL; without -L the cron never runs).
+          curl -fsSL -X GET "$CRON_INVOKE_URL" \
             -H "Authorization: Bearer ${CRON_SECRET}" \
             -H "Accept: application/json"
