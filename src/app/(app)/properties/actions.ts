@@ -126,3 +126,42 @@ export async function updatePropertyStatusAction(
 
   return undefined;
 }
+
+export async function deletePropertyAction(
+  propertyId: string,
+): Promise<
+  | { ok: true; listingType: "sale" | "letting" }
+  | { ok: false; error: string }
+> {
+  const session = await auth();
+  if (!session?.user?.companyId) {
+    return { ok: false, error: "Not signed in." };
+  }
+  const id = propertyId.trim();
+  if (!id) {
+    return { ok: false, error: "Missing property." };
+  }
+
+  const property = await getPropertyForCompany(id, session.user.companyId);
+  if (!property) {
+    return { ok: false, error: "Property not found." };
+  }
+
+  const sql = getSql();
+  const rows = await sql`
+    DELETE FROM properties
+    WHERE id = ${id} AND company_id = ${session.user.companyId}
+    RETURNING id
+  `;
+  if (rows.length === 0) {
+    return { ok: false, error: "Could not delete this property." };
+  }
+
+  const listingType = property.listing_type === "letting" ? "letting" : "sale";
+  revalidatePath("/properties");
+  revalidatePath("/dashboard");
+  revalidatePath("/reports");
+  revalidatePath(`/properties/${id}`);
+
+  return { ok: true, listingType };
+}

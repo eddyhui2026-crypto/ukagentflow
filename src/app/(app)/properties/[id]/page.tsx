@@ -11,6 +11,7 @@ import { PropertyHeroImageCard } from "./property-hero-image-card";
 import { PropertyLettingPrequalCard } from "./property-letting-prequal-card";
 import { PropertySalePrequalCard } from "./property-sale-prequal-card";
 import { Suspense } from "react";
+import { DeletePropertyButton } from "@/components/delete-property-button";
 import { PropertyStatusSelect } from "@/components/property-status-select";
 import { cn } from "@/lib/utils";
 
@@ -89,6 +90,12 @@ export default async function PropertyDetailPage({
               propertyId={id}
               listingType={property.listing_type}
               currentStatus={property.status}
+            />
+            <DeletePropertyButton
+              propertyId={id}
+              address={property.address}
+              postcode={property.postcode}
+              listingType={property.listing_type === "letting" ? "letting" : "sale"}
             />
           </div>
         </div>

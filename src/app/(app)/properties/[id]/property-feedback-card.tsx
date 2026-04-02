@@ -1,4 +1,5 @@
 import { AgentFollowUpSelect } from "@/components/agent-follow-up-select";
+import { DeleteFeedbackButton } from "@/components/delete-feedback-button";
 import { FeedbackDetailDrawerTrigger } from "@/components/feedback-detail-drawer";
 import { FeedbackEmptyState } from "@/components/feedback-empty-state";
 import { listFeedbackForProperty } from "@/lib/feedback/queries";
@@ -118,7 +119,7 @@ export async function PropertyFeedbackCard({
         />
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1280px] text-left text-sm">
+          <table className="w-full min-w-[1320px] text-left text-sm">
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
                 <th className="px-3 py-3">Leads</th>
@@ -142,6 +143,9 @@ export async function PropertyFeedbackCard({
                 <th className="hidden max-w-[160px] px-3 py-3 xl:table-cell">Liked</th>
                 <th className="hidden max-w-[160px] px-3 py-3 xl:table-cell">Disliked</th>
                 <th className="hidden max-w-[180px] px-3 py-3 xl:table-cell">Comment</th>
+                <th className="w-20 whitespace-nowrap px-2 py-3 text-right">
+                  <span className="sr-only">Delete</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
@@ -323,6 +327,13 @@ export async function PropertyFeedbackCard({
                       title={row.comment ?? undefined}
                     >
                       {snippet(row.comment)}
+                    </td>
+                    <td className="whitespace-nowrap px-2 py-3 text-right align-top">
+                      <DeleteFeedbackButton
+                        feedbackId={row.id}
+                        buyerLabel={row.buyer_email}
+                        compact
+                      />
                     </td>
                   </tr>
                 );

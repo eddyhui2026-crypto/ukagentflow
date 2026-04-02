@@ -11,6 +11,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { AgentFollowUpSelect } from '@/components/agent-follow-up-select';
+import { DeleteFeedbackButton } from '@/components/delete-feedback-button';
 import { ContactOutreachLinks } from '@/components/contact-outreach-links';
 import { FeedbackDetailDrawerTrigger } from '@/components/feedback-detail-drawer';
 import { FeedbackEmptyState } from '@/components/feedback-empty-state';
@@ -96,7 +97,7 @@ function lettingPetsShort(v: boolean | null) {
 
 /** Narrower min-widths on small viewports so less horizontal panning now the sidebar is off-canvas. */
 const FEEDBACK_TABLE_MIN =
-  'min-w-[640px] sm:min-w-[880px] lg:min-w-[1100px] xl:min-w-[1268px]';
+  'min-w-[640px] sm:min-w-[880px] lg:min-w-[1150px] xl:min-w-[1310px]';
 const BODY_MAX_HEIGHT = 'max-h-[22rem] max-md:max-h-[min(70vh,28rem)]';
 const PREQUAL_TABLE_MIN =
   'min-w-[520px] sm:min-w-[760px] lg:min-w-[960px] xl:min-w-[1040px]';
@@ -512,6 +513,9 @@ export function DashboardListingActivityPanel({
                     />
                     <th className="whitespace-nowrap px-3 py-3">Details</th>
                     <th className="w-[7.75rem] min-w-0 px-2 py-3">Follow-up</th>
+                    <th className="w-12 px-1 py-3 text-right">
+                      <span className="sr-only">Delete</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
@@ -652,6 +656,13 @@ export function DashboardListingActivityPanel({
                           compact
                           feedbackId={row.id}
                           value={row.agent_follow_up as AgentFollowUp}
+                        />
+                      </td>
+                      <td className="w-12 px-1 py-3 align-top text-right">
+                        <DeleteFeedbackButton
+                          feedbackId={row.id}
+                          buyerLabel={row.buyer_email}
+                          compact
                         />
                       </td>
                     </tr>
