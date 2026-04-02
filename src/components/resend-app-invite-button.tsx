@@ -17,7 +17,10 @@ export function ResendAppInviteButton({
   );
 
   return (
-    <form action={formAction} className="flex min-w-[8.5rem] flex-col items-stretch gap-0.5">
+    <form
+      action={formAction}
+      className="m-0 flex min-w-[8.5rem] flex-col items-stretch gap-0.5 p-0"
+    >
       <input type="hidden" name="viewing_buyer_id" value={viewingBuyerId} />
       <input type="hidden" name="property_id" value={propertyId} />
       <Button

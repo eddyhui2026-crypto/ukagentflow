@@ -220,7 +220,9 @@ export async function PropertyViewingsCard({
                                             propertyId={propertyId}
                                           />
                                         ) : (
-                                          <span className="text-[11px] text-zinc-400 dark:text-zinc-600">—</span>
+                                          <span className="inline-block text-[11px] text-zinc-400 dark:text-zinc-600">
+                                            —
+                                          </span>
                                         )}
                                       </td>
                                       <td className="px-3 py-2 align-top">
@@ -242,14 +244,14 @@ export async function PropertyViewingsCard({
                                               rel="noopener noreferrer"
                                               className={cn(
                                                 buttonVariants({ variant: "outline", size: "sm" }),
-                                                "inline-flex h-8 text-xs",
+                                                "inline-flex h-8 shrink-0 items-center justify-center px-3 text-xs",
                                               )}
                                             >
                                               Send via WhatsApp
                                             </a>
                                           ) : (
                                             <span
-                                              className="text-[11px] text-zinc-400 dark:text-zinc-500"
+                                              className="inline-block text-[11px] text-zinc-400 dark:text-zinc-500"
                                               title="Add a mobile number to this buyer to use WhatsApp"
                                             >
                                               —
@@ -257,7 +259,7 @@ export async function PropertyViewingsCard({
                                           );
                                         })()}
                                       </td>
-                                      <td className="px-3 py-2">
+                                      <td className="px-3 py-2 align-top">
                                         <CopyAgentEmailDraftButton
                                           draftText={buildAgentCopyEmailDraft({
                                             buyerEmail: b.buyer_email,
