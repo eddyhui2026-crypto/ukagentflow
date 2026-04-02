@@ -104,7 +104,9 @@ export async function PropertyFeedbackCard({
         </h2>
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
           Submissions from feedback links (for sale and to-let listings). Hot interest sorted to the
-          top. Use <strong className="font-medium">Status</strong> to track your follow-up.
+          top. <strong className="font-medium">Full feedback</strong> is beside each buyer email in the
+          second column (after Leads). Use <strong className="font-medium">Status</strong> to track your
+          follow-up.
         </p>
       </div>
       {rows.length === 0 ? (
@@ -120,10 +122,10 @@ export async function PropertyFeedbackCard({
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
                 <th className="px-3 py-3">Leads</th>
+                <th className="min-w-[12rem] px-3 py-3">Buyer / contact</th>
                 <th className="px-3 py-3">Submitted</th>
                 <th className="px-3 py-3">Viewing</th>
                 <th className="px-3 py-3">Lag</th>
-                <th className="min-w-[12rem] px-3 py-3">Buyer / contact</th>
                 <th className="hidden px-3 py-3 lg:table-cell" title="Buyer position or tenant move-in / occupants / income">
                   Position / tenancy
                 </th>
@@ -181,19 +183,7 @@ export async function PropertyFeedbackCard({
                         ) : null}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-3 text-zinc-600 dark:text-zinc-400">
-                      {formatDateTime(row.submitted_at)}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-3 text-zinc-700 dark:text-zinc-300">
-                      {formatViewDate(row.viewing_date)}
-                    </td>
-                    <td
-                      className="whitespace-nowrap px-3 py-3 text-zinc-700 dark:text-zinc-300"
-                      title="Calendar days after viewing (London)"
-                    >
-                      {replyLagLabel(lag)}
-                    </td>
-                    <td className="max-w-[14rem] px-3 py-3 align-top text-zinc-900 dark:text-zinc-50">
+                    <td className="max-w-[14rem] min-w-[10.5rem] px-3 py-3 align-top text-zinc-900 dark:text-zinc-50">
                       <div className="font-medium">{row.buyer_name}</div>
                       <div className="mt-1.5 flex min-w-0 flex-col gap-1.5">
                         <a
@@ -229,10 +219,22 @@ export async function PropertyFeedbackCard({
                             hasPets={row.has_pets}
                             petsDetail={row.pets_detail}
                             householdIncomeBand={row.household_income_band}
-                            triggerClassName="mt-1"
+                            triggerClassName="mt-0.5 inline-flex"
                           />
                         </div>
                       </div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-600 dark:text-zinc-400">
+                      {formatDateTime(row.submitted_at)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-700 dark:text-zinc-300">
+                      {formatViewDate(row.viewing_date)}
+                    </td>
+                    <td
+                      className="whitespace-nowrap px-3 py-3 text-zinc-700 dark:text-zinc-300"
+                      title="Calendar days after viewing (London)"
+                    >
+                      {replyLagLabel(lag)}
                     </td>
                     <td className="hidden max-w-[7rem] px-3 py-3 text-xs text-zinc-600 dark:text-zinc-400 lg:table-cell">
                       {row.listing_type === "letting"

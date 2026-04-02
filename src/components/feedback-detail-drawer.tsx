@@ -69,7 +69,7 @@ export function FeedbackDetailDrawerTrigger({
         type="button"
         onClick={() => setOpen(true)}
         className={cn(
-          "text-left text-xs font-medium text-blue-600 underline decoration-blue-600/80 underline-offset-2 hover:no-underline dark:text-blue-400 dark:decoration-blue-400/80",
+          "inline-flex text-left text-xs font-medium text-blue-600 underline decoration-blue-600/80 underline-offset-2 hover:no-underline dark:text-blue-400 dark:decoration-blue-400/80",
           triggerClassName,
         )}
       >
