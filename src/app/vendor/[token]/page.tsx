@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getVendorPortalProperty,
@@ -83,7 +82,7 @@ export default async function VendorPortalPage({
           <h1 className="mt-2 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{line}</h1>
           <p className="mx-auto mt-3 max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
             Buyer names are not shown here. Your agent may share fuller detail separately. This page is a
-            read-only summary of feedback submitted through UKAgentFlow.
+            read-only summary of feedback your agent collects after viewings.
           </p>
         </header>
 
@@ -168,12 +167,6 @@ export default async function VendorPortalPage({
             </div>
           </div>
         )}
-
-        <p className="mt-10 text-center text-xs text-zinc-500">
-          <Link href="/" className="text-blue-600 hover:underline dark:text-blue-400">
-            UKAgentFlow
-          </Link>
-        </p>
       </div>
     </div>
   );
