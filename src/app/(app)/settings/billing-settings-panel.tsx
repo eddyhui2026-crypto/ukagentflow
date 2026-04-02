@@ -110,13 +110,13 @@ export function BillingSettingsPanel({
 
       {!stripeConfigured ? (
         <p className="text-sm text-amber-800 dark:text-amber-200">
-          Online billing is not configured on this deployment (<code className="text-xs">STRIPE_*</code>{" "}
-          env). Add keys to enable checkout.
+          Online checkout isn&apos;t turned on for this workspace yet. You can keep using the app; subscribe when
+          your company enables billing.
         </p>
       ) : subscribed ? (
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          You have an active or trialing subscription in Stripe. Manage payment method and invoices in the
-          Stripe customer portal when you add portal links; status above updates from webhooks.
+          You have an active subscription. Payment method and billing details are handled in Stripe when your
+          company sets that up; the status above refreshes as things change.
         </p>
       ) : (
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">

@@ -61,8 +61,7 @@ export function PropertyCreateForm() {
       ) : (
         <>
           <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-            Set <code className="font-mono text-xs">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>{" "}
-            for postcode lookup. For now, enter everything manually.
+            Address lookup isn&apos;t available here — enter the address and postcode manually.
           </p>
           <div className="space-y-1.5">
             <label htmlFor="address" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">

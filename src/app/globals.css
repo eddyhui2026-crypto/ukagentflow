@@ -128,3 +128,40 @@
     @apply font-sans;
   }
 }
+
+/* Signed-in header tip ticker (AppHeaderTicker) */
+@keyframes app-header-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.app-header-ticker-marquee {
+  overflow: hidden;
+}
+
+.app-header-ticker-static {
+  display: none;
+  align-items: center;
+}
+
+.app-header-marquee-track {
+  animation: app-header-marquee 70s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-header-marquee-track {
+    animation: none;
+  }
+
+  .app-header-ticker-marquee {
+    display: none;
+  }
+
+  .app-header-ticker-static {
+    display: flex;
+  }
+}

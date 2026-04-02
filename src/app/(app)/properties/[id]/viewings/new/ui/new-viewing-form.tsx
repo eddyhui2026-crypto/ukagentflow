@@ -133,15 +133,13 @@ export function NewViewingForm({ propertyId }: { propertyId: string }) {
                 Email buyers automatically
               </strong>
               <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
-                UKAgentFlow emails each buyer a personal link via Resend{" "}
+                UKAgentFlow emails each buyer a personal link{" "}
                 <strong className="font-medium text-zinc-700 dark:text-zinc-300">
                   the morning after the viewing
                 </strong>{" "}
-                (about 9:00 Europe/London), not immediately. A scheduled job must call your production
-                <code className="mx-0.5 rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">/api/cron/send-feedback-invites</code>{" "}
-                (e.g. GitHub Actions in
-                <code className="mx-0.5 rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">.github/workflows</code>{" "}
-                + <code className="rounded bg-zinc-200 px-1 text-[10px] dark:bg-zinc-800">CRON_SECRET</code>).
+                (about 9:00 Europe/London), not straight after you save. If someone needs the link sooner, use{" "}
+                <strong className="font-medium text-zinc-700 dark:text-zinc-300">Copy email draft</strong> on the
+                property page.
               </span>
             </span>
           </label>

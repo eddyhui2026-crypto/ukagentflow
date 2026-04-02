@@ -5,6 +5,8 @@ import type { Session } from "next-auth";
 import { Menu, X } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AppHeaderGreeting } from "@/components/app-header-greeting";
+import { AppHeaderTicker } from "@/components/app-header-ticker";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ReportProblemControl } from "@/components/report-problem-control";
 import { signOutAction } from "@/app/(app)/actions";
@@ -93,42 +95,39 @@ export function AppChrome({
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-zinc-200 bg-white px-3 dark:border-zinc-800 dark:bg-zinc-900 sm:gap-3 sm:px-5 lg:px-6">
-          <div className="flex min-w-0 items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-lg"
-              className="shrink-0 md:hidden"
-              aria-expanded={mobileNavOpen}
-              aria-controls="app-mobile-nav"
-              aria-label="Open menu"
-              onClick={() => setMobileNavOpen(true)}
-            >
-              <Menu className="size-5 text-zinc-700 dark:text-zinc-200" aria-hidden />
-            </Button>
-            <div className="min-w-0 text-xs text-zinc-600 dark:text-zinc-400 sm:text-sm">
-              <span className="truncate font-medium text-zinc-800 dark:text-zinc-100">
-                {session.user?.name}
-              </span>
-              <span className="mx-1 text-zinc-300 dark:text-zinc-600 sm:mx-2">·</span>
-              <span className="hidden truncate text-zinc-500 sm:inline">{session.user?.email}</span>
+        <header className="flex shrink-0 flex-col border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="flex h-14 items-center justify-between gap-2 px-3 sm:gap-3 sm:px-5 lg:px-6">
+            <div className="flex min-w-0 items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-lg"
+                className="shrink-0 md:hidden"
+                aria-expanded={mobileNavOpen}
+                aria-controls="app-mobile-nav"
+                aria-label="Open menu"
+                onClick={() => setMobileNavOpen(true)}
+              >
+                <Menu className="size-5 text-zinc-700 dark:text-zinc-200" aria-hidden />
+              </Button>
+              <AppHeaderGreeting session={session} />
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+              <ReportProblemControl />
+              <Link
+                href="/"
+                className="hidden text-sm text-zinc-500 hover:text-zinc-900 sm:inline dark:hover:text-zinc-50"
+              >
+                Home
+              </Link>
+              <form action={signOutAction}>
+                <Button type="submit" variant="outline" size="sm" className="h-8 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm">
+                  Sign out
+                </Button>
+              </form>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-            <ReportProblemControl />
-            <Link
-              href="/"
-              className="hidden text-sm text-zinc-500 hover:text-zinc-900 sm:inline dark:hover:text-zinc-50"
-            >
-              Home
-            </Link>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm" className="h-8 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm">
-                Sign out
-              </Button>
-            </form>
-          </div>
+          <AppHeaderTicker />
         </header>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>

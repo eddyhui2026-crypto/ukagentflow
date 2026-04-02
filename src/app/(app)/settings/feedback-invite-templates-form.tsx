@@ -188,7 +188,7 @@ export function FeedbackInviteTemplatesForm({
         <FormActions />
         {usingDefaults ? (
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Nothing custom saved in the database yet — showing built-in default text in the fields.
+            Nothing custom saved yet — showing built-in default text in the fields.
           </p>
         ) : null}
       </form>

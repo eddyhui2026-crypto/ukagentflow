@@ -147,13 +147,8 @@ export default async function SettingsPage() {
                     <strong className="font-medium text-zinc-800 dark:text-zinc-200">
                       9:00 Europe/London
                     </strong>{" "}
-                    — not the moment you save. Subject and body use the same placeholders when that send
-                    runs (configure a scheduled job — e.g. GitHub Actions — calling{" "}
-                    <code className="rounded bg-zinc-100 px-1 text-xs dark:bg-zinc-800">
-                      /api/cron/send-feedback-invites
-                    </code>{" "}
-                    with <code className="rounded bg-zinc-100 px-1 text-xs dark:bg-zinc-800">CRON_SECRET</code>
-                    ).
+                    — not the moment you save. The subject and body below use the same placeholders when those
+                    emails go out.
                   </p>
                   <div className="mt-6">
                     <InviteAutoSettingsPanel
@@ -283,8 +278,8 @@ export default async function SettingsPage() {
                         <strong className="font-medium text-zinc-700 dark:text-zinc-300">property + email</strong>{" "}
                         (same email re-submits update that row for that address only). They are{" "}
                         <strong className="font-medium text-zinc-700 dark:text-zinc-300">not</strong>{" "}
-                        auto-filled into the post-viewing feedback form — feedback uses a different token after
-                        each viewing.
+                        auto-filled into the post-viewing feedback form — each viewing gets its own feedback link
+                        afterwards.
                       </p>
                       <div className="mt-6">
                         <SalePrequalSettingsForm
