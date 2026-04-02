@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 const metadataBase = getMetadataBaseUrl();
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
 export const viewport: Viewport = {
   themeColor: "#0284c7",
@@ -28,6 +29,9 @@ export const metadata: Metadata = {
     title: "UKAgentFlow",
     statusBarStyle: "default",
   },
+  ...(googleSiteVerification
+    ? { verification: { google: googleSiteVerification } }
+    : {}),
 };
 
 export default function RootLayout({
