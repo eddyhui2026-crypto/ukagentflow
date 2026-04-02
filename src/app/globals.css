@@ -129,39 +129,22 @@
   }
 }
 
-/* Signed-in header tip ticker (AppHeaderTicker) */
-@keyframes app-header-marquee {
+/* Signed-in header tip — one line at a time, gentle fade on change */
+@keyframes app-header-tip-fade {
   from {
-    transform: translateX(0);
+    opacity: 0.25;
   }
   to {
-    transform: translateX(-50%);
+    opacity: 1;
   }
 }
 
-.app-header-ticker-marquee {
-  overflow: hidden;
-}
-
-.app-header-ticker-static {
-  display: none;
-  align-items: center;
-}
-
-.app-header-marquee-track {
-  animation: app-header-marquee 70s linear infinite;
+.app-header-tip-line {
+  animation: app-header-tip-fade 0.75s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-header-marquee-track {
+  .app-header-tip-line {
     animation: none;
-  }
-
-  .app-header-ticker-marquee {
-    display: none;
-  }
-
-  .app-header-ticker-static {
-    display: flex;
   }
 }

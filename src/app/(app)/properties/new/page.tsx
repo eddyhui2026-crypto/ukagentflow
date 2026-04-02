@@ -17,7 +17,10 @@ export default function NewPropertyPage() {
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           Add an instruction to track viewings and buyer feedback.
         </p>
-        <div className="mt-8 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <div
+          data-tour="onboarding-property-form"
+          className="mt-8 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
+        >
           <PropertyCreateForm />
         </div>
       </div>

@@ -52,6 +52,7 @@ export default async function PropertiesPage({
           </div>
           <Link
             href="/properties/new"
+            data-tour="onboarding-add-property"
             className={cn(buttonVariants({ variant: "default", size: "default" }))}
           >
             + Add property

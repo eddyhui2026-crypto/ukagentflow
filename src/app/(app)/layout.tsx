@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { AppChrome } from "@/components/app-chrome";
 import { countFeedbackSinceForCompany, countPrequalSinceForCompany } from "@/lib/dashboard/queries";
 import { dashboardRollingRecentSince } from "@/lib/dashboard/recent-window";
+import { getUserOnboardingIntroDismissed } from "@/lib/users/onboarding";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({
@@ -21,8 +22,16 @@ export default async function AppLayout({
   ]);
   const sidebarRecent24hCount = fb.sale + fb.letting + pq.sale + pq.letting;
 
+  const introDismissed = await getUserOnboardingIntroDismissed(session.user.id);
+  const isFirstAuthSession = session.user.previousLoginAt == null;
+  const showIntroHint = isFirstAuthSession && !introDismissed;
+
   return (
-    <AppChrome session={session} sidebarRecent24hCount={sidebarRecent24hCount}>
+    <AppChrome
+      session={session}
+      sidebarRecent24hCount={sidebarRecent24hCount}
+      showIntroHint={showIntroHint}
+    >
       {children}
     </AppChrome>
   );

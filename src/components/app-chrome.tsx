@@ -2,27 +2,45 @@
 
 import Link from "next/link";
 import type { Session } from "next-auth";
-import { Menu, X } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Map, Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState, useTransition } from "react";
+import { dismissAppOnboardingIntroAction } from "@/app/(app)/onboarding-actions";
+import { signOutAction } from "@/app/(app)/actions";
+import { AppGuidedTour } from "@/components/app-guided-tour";
 import { AppHeaderGreeting } from "@/components/app-header-greeting";
 import { AppHeaderTicker } from "@/components/app-header-ticker";
+import { AppOnboardingIntroHint } from "@/components/app-onboarding-intro-hint";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ReportProblemControl } from "@/components/report-problem-control";
-import { signOutAction } from "@/app/(app)/actions";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function AppChrome({
   session,
   sidebarRecent24hCount = 0,
+  showIntroHint = false,
   children,
 }: {
   session: Session;
   /** Feedback + pre-viewing submissions in the last 24h (live listings) — Dashboard nav badge */
   sidebarRecent24hCount?: number;
+  /** First session: show one-time hint that Guided tour exists */
+  showIntroHint?: boolean;
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [guidedTourOpen, setGuidedTourOpen] = useState(false);
+  const [, startTransition] = useTransition();
+
+  function startGuidedTour() {
+    startTransition(async () => {
+      await dismissAppOnboardingIntroAction();
+      router.refresh();
+    });
+    setGuidedTourOpen(true);
+  }
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -103,6 +121,7 @@ export function AppChrome({
                 variant="outline"
                 size="icon-lg"
                 className="shrink-0 md:hidden"
+                data-tour="onboarding-mobile-menu"
                 aria-expanded={mobileNavOpen}
                 aria-controls="app-mobile-nav"
                 aria-label="Open menu"
@@ -113,6 +132,26 @@ export function AppChrome({
               <AppHeaderGreeting session={session} />
             </div>
             <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="hidden h-8 gap-1 px-2 text-xs sm:inline-flex sm:h-9 sm:px-2.5 sm:text-sm"
+                onClick={startGuidedTour}
+              >
+                <Map className="size-3.5 shrink-0" aria-hidden />
+                Guided tour
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="sm:hidden"
+                aria-label="Guided tour"
+                onClick={startGuidedTour}
+              >
+                <Map className="size-4" aria-hidden />
+              </Button>
               <ReportProblemControl />
               <Link
                 href="/"
@@ -128,9 +167,11 @@ export function AppChrome({
             </div>
           </div>
           <AppHeaderTicker />
+          {showIntroHint ? <AppOnboardingIntroHint onStartTour={startGuidedTour} /> : null}
         </header>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
+      <AppGuidedTour open={guidedTourOpen} onClose={() => setGuidedTourOpen(false)} />
     </div>
   );
 }

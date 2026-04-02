@@ -86,6 +86,7 @@ export async function PropertyViewingsCard({
         </div>
         <Link
           href={`/properties/${propertyId}/viewings/new`}
+          data-tour="onboarding-schedule-viewing"
           className={cn(buttonVariants({ size: "sm" }))}
         >
           + Schedule viewing

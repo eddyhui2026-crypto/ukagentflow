@@ -86,6 +86,7 @@ export function AppSidebar({
               key={href}
               href={href}
               onClick={onNavigate}
+              data-tour={listing === "sale" ? "onboarding-nav-for-sale" : undefined}
               className={cn(
                 "rounded-md px-3 py-2 text-sm font-medium",
                 active

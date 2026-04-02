@@ -21,7 +21,7 @@ export function NewViewingForm({ propertyId }: { propertyId: string }) {
   );
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} data-tour="onboarding-viewing-form" className="space-y-6">
       <input type="hidden" name="property_id" value={propertyId} />
       <div className="space-y-1.5">
         <label htmlFor="viewing_date" className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
